@@ -47,5 +47,6 @@ class Tiktok(commands.Cog):
         await message.channel.send(file=file, reference=message)
         os.remove(filename)
 
+
 async def setup(bot):
     await bot.add_cog(Tiktok(bot))
