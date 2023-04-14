@@ -108,7 +108,7 @@ def avh_create_table(cursor, db):
     db.commit()
 
 
-def url_in_DB(cursor, url):
+def url_not_in_DB(cursor, url):
     """
     Checks wheither a given url is in the database.
     This avoids duplicates.
