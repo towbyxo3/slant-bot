@@ -181,7 +181,7 @@ class Discord_Info(commands.Cog):
         member = member or ctx.author
         all_status = {
             "online": "🟢",
-            "idle":  "🟡",
+            "idle": "🟡",
             "dnd": "🔴",
             "offline": "⚫"
         }
@@ -223,11 +223,13 @@ class Discord_Info(commands.Cog):
         embed.add_field(name=f"Roles ({len(member.roles)-1})", value=show_roles, inline=False)
         embed.set_footer(text=f"{all_status[str(member.status)]}: {member} · {member.id}")
 
-
         await ctx.send(embed=embed)
 
     @commands.command()
     async def names(self, ctx, member: discord.Member = None):
+        """
+        Gets history of names of user.
+        """
         if member is None:
             member = ctx.author
         user = member.id
@@ -249,6 +251,9 @@ class Discord_Info(commands.Cog):
 
     @commands.command(aliases=["bn"])
     async def banner(self, ctx, member: discord.Member = None):
+        """
+        Shows users global banner
+        """
         if member is None:
             member = ctx.author
 
@@ -270,6 +275,7 @@ class Discord_Info(commands.Cog):
             embed.set_image(url=user.banner.url)
 
             await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(Discord_Info(bot))

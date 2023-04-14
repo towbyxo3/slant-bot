@@ -19,7 +19,7 @@ sys.path.append("queries")
 sys.path.append("helpers")
 
 
-def entryAvatar(cursor, db, date, id, url, original_url):
+def entry_avatar(cursor, db, date, id, url, original_url):
     """
     Stores information of a users avatar in database.
 
@@ -47,7 +47,7 @@ def entryAvatar(cursor, db, date, id, url, original_url):
 #     return user[0] if user else None
 
 
-def deleteAvatar(cursor, db, idAV):
+def delete_avatar(cursor, db, idAV):
     """
     Deletes the database entry of a certain avatar.
     This function is available in the avatar history command where
@@ -65,7 +65,7 @@ def deleteAvatar(cursor, db, idAV):
     db.commit()
 
 
-def deleteAvatarAll(cursor, db, id, current_av):
+def delete_all_avatar(cursor, db, id, current_av):
     """
     Deletes all avatars of a user except the currently used one
 
@@ -91,7 +91,7 @@ def deleteAvatarAll(cursor, db, id, current_av):
     return items
 
 
-def avhCreateTable(cursor, db):
+def avh_create_table(cursor, db):
     """
     Creates the avatar history table if it doesn't exist yet
     """
@@ -108,7 +108,7 @@ def avhCreateTable(cursor, db):
     db.commit()
 
 
-def urlNotInDB(cursor, url):
+def url_in_DB(cursor, url):
     """
     Checks wheither a given url is in the database.
     This avoids duplicates.
@@ -127,7 +127,7 @@ def urlNotInDB(cursor, url):
     return result is None
 
 
-def getAvatars(cursor, id):
+def get_avatar_history(cursor, id):
     """
     Fetches all avatars of a user in the avatar history database
 
@@ -319,7 +319,7 @@ class AvatarHistoryView(discord.ui.View):
             avh_DB = sqlite3.connect('avhistory.db')
             avh_cursor = avh_DB.cursor()
 
-            deleteAvatar(avh_cursor, avh_DB, idAV)
+            delete_avatar(avh_cursor, avh_DB, idAV)
             avh_DB.close()
             self.data.pop(self.current_page - 1)
 
@@ -346,13 +346,13 @@ class AvHistory(commands.Cog):
 
         avh_DB = sqlite3.connect('avhistory.db')
         avh_cursor = avh_DB.cursor()
-        avhCreateTable(avh_cursor, avh_DB)
+        avh_create_table(avh_cursor, avh_DB)
 
         # create a list of a members avatars
         avatars = [after.avatar, after.display_avatar, before.avatar, before.display_avatar]
         # get rid of none types and duplicates
         avatars = [x for x in avatars if x is not None]
-        avatars = [x for x in avatars if urlNotInDB(avh_cursor, str(x))]
+        avatars = [x for x in avatars if url_in_DB(avh_cursor, str(x))]
         avatars = list(set(avatars))
 
         # check if we have to add avatars to the database
@@ -379,7 +379,7 @@ class AvHistory(commands.Cog):
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
                 url = m.attachments[0].url
-                entryAvatar(avh_cursor, avh_DB, now, after.id, url, str(av))
+                entry_avatar(avh_cursor, avh_DB, now, after.id, url, str(av))
                 print(url)
             except (discord.NotFound, discord.HTTPException, AttributeError):
                 pass
@@ -430,7 +430,7 @@ class AvHistory(commands.Cog):
             avatars = list(set([member.display_avatar, member.avatar]))
 
             for av in avatars:
-                if urlNotInDB(avh_cursor, str(av)):
+                if url_in_DB(avh_cursor, str(av)):
                     file_name = f"{av.key}.{'gif' if av.is_animated() else 'png'}"
                     file_bytes = await av.read()
                     channel = self.bot.get_channel(1057132789935394908)
@@ -444,7 +444,7 @@ class AvHistory(commands.Cog):
                         allowed_mentions=discord.AllowedMentions.none(),
                     )
                     url = m.attachments[0].url
-                    entryAvatar(avh_cursor, avh_DB, now, member.id, url, str(av))
+                    entry_avatar(avh_cursor, avh_DB, now, member.id, url, str(av))
         except (discord.NotFound, discord.HTTPException, AttributeError):
             pass
 
@@ -470,7 +470,7 @@ class AvHistory(commands.Cog):
         avh_cursor = avh_DB.cursor()
 
         # we store the avatar history data in  list of dicts
-        for date, id, url, idAV in getAvatars(avh_cursor, member.id):
+        for date, id, url, idAV in get_avatar_history(avh_cursor, member.id):
             data.append(
                 {
                     "date": date,
@@ -505,7 +505,7 @@ class AvHistory(commands.Cog):
 
         avh_DB = sqlite3.connect('avhistory.db')
         avh_cursor = avh_DB.cursor()
-        avhCreateTable(avh_cursor, avh_DB)
+        avh_create_table(avh_cursor, avh_DB)
 
         # print(ctx.guild.members)
 
@@ -522,7 +522,7 @@ class AvHistory(commands.Cog):
             print(type(mem))
             avatars = [mem.avatar, mem.display_avatar]
             avatars = [x for x in avatars if x is not None]
-            avatars = [x for x in avatars if urlNotInDB(avh_cursor, str(x))]
+            avatars = [x for x in avatars if url_in_DB(avh_cursor, str(x))]
             print(avatars)
             avatars = list(set(avatars))
 
@@ -542,7 +542,7 @@ class AvHistory(commands.Cog):
                     allowed_mentions=discord.AllowedMentions.none()
                 )
                 url = m.attachments[0].url
-                entryAvatar(avh_cursor, avh_DB, now, mem.id, url, str(av))
+                entry_avatar(avh_cursor, avh_DB, now, mem.id, url, str(av))
                 new += 1
                 print(url)
 

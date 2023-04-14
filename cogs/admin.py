@@ -29,8 +29,8 @@ class Admin(commands.Cog):
     async def amiadmin(self, ctx: Context[BotT]):
         """ Are you an admin? """
         if ctx.author.id in self.config["owners"]:
-            return await ctx.send(f"**YES**✅😏")
-        await ctx.send(f"no, you are a pleb {ctx.author.name}")
+            return await ctx.send(f"Yes")
+        await ctx.send(f"You wish")
 
     @commands.command()
     @commands.check(permissions.is_owner)
