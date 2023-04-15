@@ -1,7 +1,7 @@
 import discord
 
 from utils import default
-# from utils.data import Bot, HelpFormat
+from utils.data import Bot, HelpFormat
 
 config = default.load_json()
 print("Logging in...")
