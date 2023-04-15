@@ -3,9 +3,13 @@ This is a Discord bot written in Python for a server with a group of friends and
 
 Features
 ## Welcome Message with AI Background Pictures
-Sends a welcome message to each new member who joins the server. The message includes a picture that features the avatar and name of the joined member. The bot uses a random picture out of 30 AI made background pictures to create the welcome message.
+Sends a welcome message to each new member who joins the server. The message includes a picture that features the avatar and name of the joined member. 
 
 ![Welcome Message example](./README/0_welcome.PNG)
+
+The bot uses a random picture out of 30 AI made background pictures to create the welcome message.
+
+![Welcome Message example](./README/01_welcome_background_examples.PNG)
 
 ## Chat Leaderboard
 Showcases Members with most messages in a time period (weekly, monthly, yearly or all-time)
