@@ -7,6 +7,11 @@ Sends a welcome message to each new member who joins the server. The message inc
 
 ![Welcome Message example](./README/0_welcome.PNG)
 
+## TIKTOK Donwloader
+Automatically downloads any TikTok links and post the video as reply to the original message. This way, you dont have to open the link to view the video. 
+
+![TT downloader example](./README/12_TIKTOK_downloader.PNG)
+
 The bot uses a random picture out of 30 AI made background pictures to create the welcome message.
 
 ![Welcome Message example](./README/01_welcome_background_examples.PNG)
