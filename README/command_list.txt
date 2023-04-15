@@ -1,0 +1,83 @@
+COMMANDS:
+
+INFO
+------
+
+AVATAR [*member]
+displays avatar of member
+AVATARHISTORY [*member]
+displays avatar history of member
+USERINFO [*member]
+displays basic information about member
+SERVERINFO
+displays basic information about server
+NAMES [*member]
+displays name history of member
+COUNTRY [country]
+displays basic information about country
+ROLES
+returns text file with all existing roles
+ABOUT
+displays bot stats
+INVITE
+returns invite link
+PING
+displays ping of the bot
+COVID [country]
+displays covid stats
+
+LEADERBOARD
+------------
+
+LEADERBOARD [*member]
+displays chat leaderboard (weekly, monthly, yearly, all-time)
+MENTION [*member]
+displays mention leaderboard (most tagged member, tagged by, ..)
+USERPEAK [*member]
+displays leaderboard of chat peaks by members (most messages by a member in a day, week, month, year)
+SERVERPEAK
+displays leaderboard of server chat peaks (most messages in a day, week, month, year)
+AGE
+displays leaderboard of oldest discord users and oldest server members
+CROWNS [*member]
+displays leaderboard of members with most crowns (you gain a crown for every day u had the most messages in the server)
+
+VOCABULARY
+------------
+
+WORLDCLOUD [*member]
+creates a wordcloud picture of the most used words by the member
+WORLDCLOUDSERVER
+creates a wordcloud picture of the most used words by the server
+VOCAB
+displays top 20 most used words in the server
+VOCABUSER [*member]
+displays top 20 most used words by a user
+SAID [word]
+displays leaderboard of people who used the requested word the most
+
+VC
+---
+
+MASSMOVE [channel]
+moves every person in the current channel to the requested channel
+MASSMOVEALL [channel]
+moves every voicechatting person in the server to the requested channel
+
+FUN
+----
+
+REWIND [*member] [*year]
+returns a rewind gallery with various chat stats of member
+REWINDS [*year]
+returns a rewind gallaery with various chat stats of the server
+SNIPE [*member]
+displays last deleted message (*by member)
+SNIP [*member]
+displays last edited message (*by member)
+MSG [*member] [*content]
+returns a random past message (*by member) (*that contains content)
+NETWORK [*member]
+displays a network graph of fellow members who chat at the same time
+
+
