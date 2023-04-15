@@ -33,7 +33,7 @@ class words(commands.Cog):
         embed = discord.Embed(
             color=discord.Color.blue()
         )
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=ctx.guild.icon)
         server_word_count = getTotalWordCountServer(m_cursor)
         server_distinct_words = getServerDistinctWords(m_cursor)
 
@@ -109,7 +109,7 @@ class words(commands.Cog):
         m_cursor = m_DB.cursor()
 
         embed = discord.Embed(color=discord.Color.blue())
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=ctx.guild.icon)
         word_count = getWordCount(m_cursor, word)
 
         topten_text = ""
