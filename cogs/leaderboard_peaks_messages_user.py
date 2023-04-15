@@ -34,7 +34,7 @@ class Userpeak(discord.ui.View):
         user_rank, user_date, id, user_msgs = TopChatUserPeaksRank(c_cursor, user)
 
         embed = discord.Embed(color=discord.Color.blue())
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 TOP Daily User Messages
@@ -74,7 +74,7 @@ class Userpeak(discord.ui.View):
         user_year, user_weak= user_date[:4], user_date[5:]
 
         embed = discord.Embed(color=discord.Color.blue())
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 TOP Weekly User Messages
@@ -115,7 +115,7 @@ class Userpeak(discord.ui.View):
         user_year, user_month= user_date[:4], get_month_name(user_date[5:])[:3]
 
         embed = discord.Embed(color=discord.Color.blue())
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 TOP Monthly User Messages
@@ -155,7 +155,7 @@ class Userpeak(discord.ui.View):
         user_rank, user_date, id, user_msgs = TopChatUserPeaksYearRank(c_cursor, user)
 
         embed = discord.Embed(color=discord.Color.blue())
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 TOP Yearly User Messages
@@ -211,7 +211,7 @@ class peaks(commands.Cog):
             title="User Chat Peaks",
             description=":information_source: `Peak Messages in a Day, Week, Month or Year`"
             )
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=ctx.guild.icon)
         embed.set_footer(
             text=f"Server ID: {ctx.guild.id}"
             )   

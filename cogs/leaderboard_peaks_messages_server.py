@@ -32,7 +32,7 @@ class Serverpeak(discord.ui.View):
         embed = discord.Embed(
             color=discord.Color.blue(),
             timestamp=self.ctx.message.created_at)
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 Daily Messages Peak
@@ -66,7 +66,7 @@ class Serverpeak(discord.ui.View):
         embed = discord.Embed(
             color=discord.Color.blue(),
             timestamp=self.ctx.message.created_at)
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 Weekly Messages Peak
@@ -99,7 +99,7 @@ class Serverpeak(discord.ui.View):
         embed = discord.Embed(
             color=discord.Color.blue(),
             timestamp=self.ctx.message.created_at)
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 Monthly Messages Peak
@@ -133,7 +133,7 @@ class Serverpeak(discord.ui.View):
         embed = discord.Embed(
             color=discord.Color.blue(),
             timestamp=self.ctx.message.created_at)
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
             name=f"""
                 Yearly Messages Peak
@@ -176,7 +176,7 @@ class serverstats(commands.Cog):
             title=f"{ctx.guild.name} Server Chat Peaks",
             description=":information_source: `Peak Messages in a Day, Week, Month or Year`"
         )
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_thumbnail(url=ctx.guild.icon)
         embed.set_footer(
             text=f"Server ID: {ctx.guild.id}"
         )
