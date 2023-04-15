@@ -15,6 +15,12 @@ The bot uses a random picture out of 30 AI made background pictures to create th
 Showcases Members with most messages in a time period (weekly, monthly, yearly or all-time)
 ![Chat LB example](./README/2_leaderboard_chat.gif)
 
+## Crowns
+Shows a leaderboard of members with the most crowns.
+You obtain a crown for every day you were the member with most messages sent.
+
+![Crowns example](./README/11_crowns.PNG)
+
 ## Wordcloud
 Creates a wordcloud of the words used by a member on the server. This command is useful for analyzing the most commonly used words.
 
@@ -49,3 +55,15 @@ Showcases last deleted message in text channel.
 Shows a leaderboard of members who used a particular word the most.
 
 ![Word example](./README/8_said.PNG)
+
+## Msg
+Finds a random past message (by a member containing a word/phrase)
+
+![Msg example](./README/9_msg.PNG)
+
+## Country
+Shows basic information about a country.
+
+![Country example](./README/10_country.PNG)
+
+
