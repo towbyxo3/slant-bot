@@ -44,3 +44,8 @@ Showcases messages peaks by members within a timeframe (most messages in one day
 Showcases last deleted message in text channel.
 
 ![Snipe example](./README/7_snipe.PNG)
+
+## Said
+Shows a leaderboard of members who used a particular word the most.
+
+![Word example](./README/8_said.PNG)
