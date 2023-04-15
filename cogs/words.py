@@ -47,7 +47,7 @@ class words(commands.Cog):
             top_10_total += frequency
 
         embed.add_field(
-            name="B40s' Vocabulary",
+            name=f"{ctx.guild.name} Vocabulary",
             value=topten_text, inline=False
         )
         embed.set_footer(
