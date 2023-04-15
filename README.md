@@ -7,13 +7,36 @@ Sends a welcome message to each new member who joins the server. The message inc
 
 ![Welcome Message example](./README/0_welcome.PNG)
 
-## Wordcloud Command
+## Chat Leaderboard
+Showcases Members with most messages in a time period (weekly, monthly, yearly or all-time)
+![Chat LB example](./README/2_leaderboard_chat.gif)
+
+## Wordcloud
 Creates a wordcloud of the words used by a member on the server. This command is useful for analyzing the most commonly used words.
 
 ![Wordcloud example](./README/1_word_cloud.PNG)
 
-## Avatar History Command
+## Avatar History 
 Showcases the profile pictures used by a member since joining the server. 
 
 ![Avatar history example](./README/3_avatar_history.gif)
 
+## Rewind
+Showcases various chat stats graphically including most active weekday of the week, time of the day etc..
+
+![Rewind example](./README/4_rewind.gif)
+
+## Network
+Showcases a network graph with members who chat at similar times as the member.
+
+![Network example](./README/5_network.PNG)
+
+## User Messages Peak Leaderboard
+Showcases messages peaks by members within a timeframe (most messages in one day, one week, one month, one year by a single member))
+
+![User messages peak example](./README/6_peak_messages_user.gif)
+
+## Snipe
+Showcases last deleted message in text channel.
+
+![Snipe example](./README/7_snipe.PNG)
