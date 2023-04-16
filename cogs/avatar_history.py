@@ -352,7 +352,7 @@ class AvHistory(commands.Cog):
         avatars = [after.avatar, after.display_avatar, before.avatar, before.display_avatar]
         # get rid of none types and duplicates
         avatars = [x for x in avatars if x is not None]
-        avatars = [x for x in avatars if url_in_DB(avh_cursor, str(x))]
+        avatars = [x for x in avatars if url_not_in_DB(avh_cursor, str(x))]
         avatars = list(set(avatars))
 
         # check if we have to add avatars to the database
@@ -430,7 +430,7 @@ class AvHistory(commands.Cog):
             avatars = list(set([member.display_avatar, member.avatar]))
 
             for av in avatars:
-                if url_in_DB(avh_cursor, str(av)):
+                if url_not_in_DB(avh_cursor, str(av)):
                     file_name = f"{av.key}.{'gif' if av.is_animated() else 'png'}"
                     file_bytes = await av.read()
                     channel = self.bot.get_channel(1057132789935394908)
@@ -522,7 +522,7 @@ class AvHistory(commands.Cog):
             print(type(mem))
             avatars = [mem.avatar, mem.display_avatar]
             avatars = [x for x in avatars if x is not None]
-            avatars = [x for x in avatars if url_in_DB(avh_cursor, str(x))]
+            avatars = [x for x in avatars if url_not_in_DB(avh_cursor, str(x))]
             print(avatars)
             avatars = list(set(avatars))
 
