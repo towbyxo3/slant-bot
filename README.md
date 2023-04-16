@@ -75,12 +75,12 @@ Shows basic information about a country.
 
 # HOW TO INSTALL
 
-1. Clone the repository 
+# 1. Clone the repository 
 `git clone https://github.com/towbyxo3/slant-python-discord-bot.git`
-2. Install packages in the requirements.txt file
-`pip install -r requirements.txt
-3. Insert your bots token and your ID into the config.json file and modify to your liking.
-4. Run the BOT.
+# 2. Install packages in the requirements.txt file
+`pip install -r requirements.txt`
+# 3. Insert your bots token and your ID into the config.json file and modify to your liking.
+# 4. Run the BOT.
 `python3 index.py`
 or
 `python index.py`
