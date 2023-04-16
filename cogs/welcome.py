@@ -92,6 +92,7 @@ class Welcome(commands.Cog):
 
         # Send the final image to the user
         await channel.send(f"Hey <@{member.id}> , welcome to **{member.guild.name}**!", file=discord.File("welcome_base_images/custom_image.png"))
+        os.remove("welcome_base_images/custom_image.png")
 
 
 async def setup(bot):
