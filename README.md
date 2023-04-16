@@ -1,18 +1,20 @@
 # Slant Server Discord BOT
 This is a Discord bot written in Python for a server with a group of friends and friends of friends. The bot is designed to make the server more fun and engaging by providing a range of useful features and commands.
 
-Features
+# Features
+The BOT has around 60 different commands and features which include very basic (like USERINFO, SERVERINFO, AVATAR, KICK, BAN, etc.) and many unique and server dedicated ones. Some of which are showcased in the next chapter.
+
 ## Welcome Message with AI Background Pictures
-Sends a welcome message to each new member who joins the server. The message includes a picture that features the avatar and name of the joined member. 
+Posts a welcome picture including the name and avatar of the newly joined member.
 
 ![Welcome Message example](./README/0_welcome.PNG)
 
-The bot uses a random picture out of 30 AI made background pictures to create the welcome message.
+The bot uses a random picture out of 25 AI made background pictures to create the welcome message.
 
 ![Welcome Message example](./README/01_welcome_background_examples.PNG)
 
-## TIKTOK Donwloader
-Automatically downloads any TikTok links and post the video as reply to the original message. This way, you dont have to open the link to view the video. 
+## TIKTOK Downloader
+Automatically downloads any TikTok links and posts the video as reply to the original message within seconds. This way, the sent TikTok is viewable directly on Discord.
 
 ![TT downloader example](./README/12_TIKTOK_downloader.PNG)
 
@@ -70,5 +72,17 @@ Finds a random past message (by a member containing a word/phrase)
 Shows basic information about a country.
 
 ![Country example](./README/10_country.PNG)
+
+# HOW TO INSTALL
+
+1. Clone the repository 
+`git clone https://github.com/towbyxo3/slant-python-discord-bot.git`
+2. Install packages in the requirements.txt file
+`pip install -r requirements.txt
+3. Insert your bots token and your ID into the config.json file and modify to your liking.
+4. Run the BOT.
+`python3 index.py`
+or
+`python index.py`
 
 
