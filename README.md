@@ -3,7 +3,9 @@
 This is a Discord bot written in Python for a server with a group of friends and friends of friends. The bot is designed to make the server more fun and engaging by providing a range of useful features and commands.
 
 # Features
-The BOT has around 60 different commands and features which include very basic (like USERINFO, SERVERINFO, AVATAR, KICK, BAN, etc.) and many unique and server dedicated ones. Some of which are showcased in the next chapter.
+The BOT has around 60 different commands and features which include very basic (like USERINFO, SERVERINFO, AVATAR, KICK, BAN, etc.) and many unique and server dedicated ones.  
+Some of which are showcased in the next chapter.  
+[Command List](README/command_list.txt)
 
 ## Welcome Message with AI Background Pictures
 Posts a welcome picture including the name and avatar of the newly joined member.
@@ -76,14 +78,15 @@ Shows basic information about a country.
 
 # HOW TO INSTALL
 
-## 1. Clone the repository 
+## 1. Clone repository 
 `git clone https://github.com/towbyxo3/slant-python-discord-bot.git`
-## 2. Install packages in the requirements.txt file
+## 2. Install packages 
 `pip install -r requirements.txt`
-## 3. Insert your bots token and your ID into the config.json file and modify to your liking.
+## 3. Modify config.json
+Insert your bots token and your ID into the config.json file and modify settings to your liking.
 ## 4. Run the BOT.
-`python3 index.py`
-or
+`python3 index.py`  
+or  
 `python index.py`
 
 
