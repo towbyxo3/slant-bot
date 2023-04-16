@@ -1,6 +1,4 @@
 *.pyc
 *.db
-*.png
-*.jpg
 config.json
 
