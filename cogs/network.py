@@ -22,7 +22,7 @@ def cmap_purple():
     return mcolors.LinearSegmentedColormap.from_list("custom", ["#303434", "purple"])
 
 
-class network(commands.Cog):
+class Network(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -142,4 +142,4 @@ class network(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(network(bot))
+    await bot.add_cog(Network(bot))

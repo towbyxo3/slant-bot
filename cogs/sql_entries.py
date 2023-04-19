@@ -83,7 +83,7 @@ def entry_message_timestamp(cursor, DB, user, timestamp, content):
     DB.commit()
 
 
-class entries(commands.Cog):
+class Entries(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -123,4 +123,4 @@ class entries(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(entries(bot))
+    await bot.add_cog(Entries(bot))

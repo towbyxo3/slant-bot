@@ -198,7 +198,7 @@ def create_wordcloud_user(words):
     plt.close('all')
 
 
-class wordcloud(commands.Cog):
+class Worldcloud(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -259,4 +259,4 @@ class wordcloud(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(wordcloud(bot))
+    await bot.add_cog(Wordcloud(bot))

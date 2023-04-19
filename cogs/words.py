@@ -15,7 +15,7 @@ sys.path.append("queries")
 sys.path.append("helpers")
 
 
-class words(commands.Cog):
+class Words(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -143,4 +143,4 @@ class words(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(words(bot))
+    await bot.add_cog(Words(bot))

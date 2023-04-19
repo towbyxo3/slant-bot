@@ -17,7 +17,7 @@ def get_quote():
     return data["content"], data["author"]
 
 
-class randommessage(commands.Cog):
+class Quote(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -121,4 +121,4 @@ class randommessage(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(randommessage(bot))
+    await bot.add_cog(Quote(bot))

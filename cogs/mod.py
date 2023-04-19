@@ -119,7 +119,7 @@ class Moderator(commands.Cog):
         muted_role = next((g for g in ctx.guild.roles if g.name == "Muted"), None)
 
         if not muted_role:
-            return await ctx.send("Are you sure you've made a role called **Muted**? Remember that it's case sensitive too...")
+            return await ctx.send("No role called **Muted**?")
 
         try:
             await member.add_roles(muted_role, reason=default.responsible(ctx.author, reason))
@@ -138,7 +138,7 @@ class Moderator(commands.Cog):
         muted_role = next((g for g in ctx.guild.roles if g.name == "Muted"), None)
 
         if not muted_role:
-            return await ctx.send("Are you sure you've made a role called **Muted**? Remember that it's case sensitive too...")
+            return await ctx.send("No role called Muted")
 
         try:
             await member.remove_roles(muted_role, reason=default.responsible(ctx.author, reason))

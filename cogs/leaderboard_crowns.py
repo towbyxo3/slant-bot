@@ -15,7 +15,7 @@ from queries.peakqueries import *
 from queries.crownqueries import *
 
 
-class crowns(commands.Cog):
+class Crowns(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -71,4 +71,4 @@ class crowns(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(crowns(bot))
+    await bot.add_cog(Crowns(bot))

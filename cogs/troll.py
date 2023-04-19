@@ -11,7 +11,7 @@ import random
 
 
 
-class Grunge(commands.Cog):
+class Troll(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -78,4 +78,4 @@ class Grunge(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(Grunge(bot))
+    await bot.add_cog(Troll(bot))

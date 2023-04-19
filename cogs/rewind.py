@@ -336,7 +336,7 @@ class rewindoview(discord.ui.View):
             await self.update_message(self.get_current_page_data())
 
 
-class rewindo(commands.Cog):
+class Rewind(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -743,4 +743,4 @@ class rewindo(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(rewindo(bot))
+    await bot.add_cog(Rewind(bot))

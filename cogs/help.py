@@ -10,7 +10,7 @@ def format_for_embed(tuple):
     return '\n'.join([f"`{command}`" + " " + argument for command, argument in tuple])
 
 
-class help(commands.Cog):
+class Help(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -108,4 +108,4 @@ class help(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(help(bot))
+    await bot.add_cog(Help(bot))

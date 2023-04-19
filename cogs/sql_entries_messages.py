@@ -8,7 +8,7 @@ import sqlite3
 import re
 
 
-def mCreateTable(m_cursor):
+def m_create_table(m_cursor):
     m_cursor.execute("""
         CREATE TABLE IF NOT EXISTS
                 words(
@@ -18,7 +18,7 @@ def mCreateTable(m_cursor):
         """)
 
 
-def m_snipeCreateTable(m_cursor):
+def m_snipe_create_table(m_cursor):
     m_cursor.execute("""
         CREATE TABLE IF NOT EXISTS
             deleted(
@@ -30,7 +30,7 @@ def m_snipeCreateTable(m_cursor):
         """)
 
 
-def m_editCreateTable(m_cursor):
+def m_edit_create_table(m_cursor):
     m_cursor.execute("""
         CREATE TABLE IF NOT EXISTS
             edited(
@@ -43,26 +43,26 @@ def m_editCreateTable(m_cursor):
         """)
 
 
-def mDataEntry(m_cursor, m_DB, user, list_of_words):
+def m_data_entry(m_cursor, m_DB, user, list_of_words):
     for word in list_of_words:
         m_cursor.execute('INSERT INTO words VALUES(?, ?)', (user, word))
         m_DB.commit()
 
 
-def m_snipeDataEntry(m_cursor, m_DB, id, date, message, channel):
+def m_snipe_data_entry(m_cursor, m_DB, id, date, message, channel):
     m_cursor.execute('INSERT INTO deleted VALUES(?, ?, ?, ?)',
                      (id, date, message, channel))
     m_DB.commit()
 
 
-def m_editDataEntry(m_cursor, m_DB, id, date_before, date_after, before, after,
+def m_edit_data_entry(m_cursor, m_DB, id, date_before, date_after, before, after,
                     channel):
     m_cursor.execute('INSERT INTO edited VALUES(?, ?, ?, ?, ?, ?)',
                      (id, date_before, date_after, before, after, channel))
     m_DB.commit()
 
 
-def m_editGetLast(m_cursor, m_db, channel):
+def m_edit_get_last(m_cursor, m_db, channel):
     m_cursor.execute("""
         SELECT *
         FROM edited
@@ -76,7 +76,7 @@ def m_editGetLast(m_cursor, m_db, channel):
     return data[0]
 
 
-def m_snipeGetLast(m_cursor, m_db, channel, user=None):
+def m_snipe_get_last(m_cursor, m_db, channel, user=None):
     if user is None:
         m_cursor.execute("""
             SELECT *
@@ -99,7 +99,7 @@ def m_snipeGetLast(m_cursor, m_db, channel, user=None):
     return data[0]
 
 
-def getWords(string):
+def extract_words(string):
     # Remove any URLs from the string
     string = re.sub(r'https?://\S+', '', string)
 
@@ -159,7 +159,7 @@ def print_time_difference(timestamp_str):
         return (f'{int(seconds / 86400)} day ago' if int(seconds / 86400) == 1 else f'{int(seconds / 86400)} days ago')
 
 
-def m_namehistoryCreate(m_cursor):
+def m_name_history_create_table(m_cursor):
     m_cursor.execute("""
         CREATE TABLE IF NOT EXISTS
             namehistory(
@@ -171,12 +171,12 @@ def m_namehistoryCreate(m_cursor):
         """)
 
 
-def m_namehistoryEntry(m_cursor, m_DB, date, id, name):
+def m_name_history_entry(m_cursor, m_DB, date, id, name):
     m_cursor.execute('INSERT OR IGNORE INTO namehistory VALUES(?, ?, ?)', (date, id, name))
     m_DB.commit()
 
 
-class message(commands.Cog):
+class MessageEntries(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -188,18 +188,18 @@ class message(commands.Cog):
             m_DB = sqlite3.connect('messages.db')
             m_cursor = m_DB.cursor()
             user = message.author.id
-            list_of_words = getWords(message.content)
-            mCreateTable(m_cursor)
-            mDataEntry(m_cursor, m_DB, user, list_of_words)
+            list_of_words = extract_words(message.content)
+            m_create_table(m_cursor)
+            m_data_entry(m_cursor, m_DB, user, list_of_words)
 
             # new##
             date = datetime.now().strftime("%Y-%m-%d")
             name = str(message.author)
             nickname = str(message.author.display_name)
 
-            m_namehistoryCreate(m_cursor)
-            m_namehistoryEntry(m_cursor, m_DB, date, user, name)
-            m_namehistoryEntry(m_cursor, m_DB, date, user, nickname)
+            m_name_history_create_table(m_cursor)
+            m_name_history_entry(m_cursor, m_DB, date, user, name)
+            m_name_history_entry(m_cursor, m_DB, date, user, nickname)
 
             mentionfilter = str(message.content).split()
             m_cursor.execute("""
@@ -230,13 +230,13 @@ class message(commands.Cog):
         if len(message.content) >= 1:
             m_DB = sqlite3.connect('messages.db')
             m_cursor = m_DB.cursor()
-            m_snipeCreateTable(m_cursor)
+            m_snipe_create_table(m_cursor)
             # Get the user who deleted the message
             date = str(message.created_at)
             author = message.author.id
             message_content = message.content
             channel = message.channel.id
-            m_snipeDataEntry(m_cursor, m_DB, author, date, message_content,
+            m_snipe_data_entry(m_cursor, m_DB, author, date, message_content,
                              channel)
 
     @commands.Cog.listener()
@@ -246,7 +246,7 @@ class message(commands.Cog):
         if len(before.content) >= 1 and before.content != after.content:
             m_DB = sqlite3.connect('messages.db')
             m_cursor = m_DB.cursor()
-            m_editCreateTable(m_cursor)
+            m_edit_create_table(m_cursor)
             date_before = str(before.created_at)[:26]
             date_after = str(datetime.utcnow())
             author = before.author.id
@@ -254,9 +254,9 @@ class message(commands.Cog):
             message_content_after = after.content
             channel = before.channel.id
 
-            m_editDataEntry(m_cursor, m_DB, author, date_before, date_after,
-                            message_content_before, message_content_after,
-                            channel)
+            m_edit_data_entry(m_cursor, m_DB, author, date_before, date_after,
+                              message_content_before, message_content_after,
+                              channel)
 
     @commands.command()
     async def snip(self, ctx):
@@ -264,7 +264,7 @@ class message(commands.Cog):
         m_cursor = m_DB.cursor()
 
         try:
-            id, date_before, date_after, before_content, after_content, channel = m_editGetLast(m_cursor, m_DB, ctx.channel.id)
+            id, date_before, date_after, before_content, after_content, channel = m_edit_get_last(m_cursor, m_DB, ctx.channel.id)
         except:
             embed = discord.Embed(color=discord.Color.blue(), description="No messages found")
             await ctx.send(embed=embed)
@@ -299,9 +299,9 @@ class message(commands.Cog):
 
         try:
             if member is None:
-                id, date, message, channel = m_snipeGetLast(m_cursor, m_DB, ctx.channel.id)
+                id, date, message, channel = m_snipe_get_last(m_cursor, m_DB, ctx.channel.id)
             else:
-                id, date, message, channel = m_snipeGetLast(m_cursor, m_DB, ctx.channel.id, member.id)
+                id, date, message, channel = m_snipe_get_last(m_cursor, m_DB, ctx.channel.id, member.id)
         except:
             embed = discord.Embed(color=discord.Color.blue(), description="No messages found")
             await ctx.send(embed=embed)
@@ -310,8 +310,6 @@ class message(commands.Cog):
         time_deleted = print_time_difference(date)
 
         sniped_user = await self.bot.fetch_user(id)
-
-        guild = ctx.guild
 
         embed = discord.Embed(  # timestamp=ctx.message.created_at,
             color=discord.Color.blue(),
@@ -323,4 +321,4 @@ class message(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(message(bot))
+    await bot.add_cog(MessageEntries(bot))

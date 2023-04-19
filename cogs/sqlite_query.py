@@ -13,7 +13,7 @@ from helpers.dateformatting import DbYYYformat
 
 
 
-class sqlqueries(commands.Cog):
+class SqlQueries(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -34,4 +34,4 @@ class sqlqueries(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(sqlqueries(bot))
+    await bot.add_cog(SqlQueries(bot))

@@ -15,7 +15,7 @@ def in_voice_channel():
     return check(predicate)
 
 
-class voicechat(commands.Cog):
+class VoiceCommands(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
@@ -51,4 +51,4 @@ class voicechat(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(voicechat(bot))
+    await bot.add_cog(VoiceCommands(bot))
