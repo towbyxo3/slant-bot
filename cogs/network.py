@@ -130,6 +130,7 @@ class Network(commands.Cog):
 
         file = discord.File("usernetwork.png")
         embed = discord.Embed(description="Network")
+        embed.set_footer(text=f"Displays the most frequent chat encounters of {ctx.member}.\nThe numbers on the graph indicate the number of times that {ctx.member} and the other person chatted within the same 5-minute time frame.")
 
         # Set the image URL
         embed.set_image(url="attachment://usernetwork.png")
