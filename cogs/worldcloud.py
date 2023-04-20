@@ -198,7 +198,7 @@ def create_wordcloud_user(words):
     plt.close('all')
 
 
-class Worldcloud(commands.Cog):
+class Wordcloud(commands.Cog):
 
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
