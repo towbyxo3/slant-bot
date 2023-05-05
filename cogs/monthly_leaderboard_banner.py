@@ -46,12 +46,16 @@ class MonthlyLeaderboardUpdate(commands.Cog):
 
     @tasks.loop(hours=24)
     async def leaderboardupdates(self):
-        if get_day_of_month() != 4:
+        # will later be changed to != 1
+        # it posts a leaderboard of the previous month on the 1st day of the month
+        if get_day_of_month() != 5:
             return
 
+        # fetch channel object where the leaderboard gets posted
         channel = self.bot.get_channel(1057132842259325029)
         month, year = get_prev_month()
 
+        # fetch server object in order to obtain its avatar/icon
         server = await self.bot.fetch_guild(1085334522440188015)
         server_av = server.icon
 
