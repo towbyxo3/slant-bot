@@ -3,9 +3,7 @@ from discord.ext import commands, tasks
 from utils import default
 import datetime
 import discord
-from PIL import Image
 import sqlite3
-import random
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import requests
 import io
@@ -46,9 +44,14 @@ class MonthlyLeaderboardUpdate(commands.Cog):
 
     @tasks.loop(hours=24)
     async def leaderboardupdates(self):
+        """
+        This task checks once a day wheither todays day is the 1st day
+        of the month. If thats the case, a leaderboard picture of
+        previous month is created and posted in a dedicated channel.
+        """
         # will later be changed to != 1
-        # it posts a leaderboard of the previous month on the 1st day of the month
-        if get_day_of_month() != 5:
+        day_of_the_month = 1
+        if get_day_of_month() != day_of_the_month:
             return
 
         # fetch channel object where the leaderboard gets posted
@@ -237,9 +240,12 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         draw = ImageDraw.Draw(BASE_IMAGE)
 
         # Save the final image
-        BASE_IMAGE.save("welcome_base_images/custom_image.png")
+        BASE_IMAGE.save("welcome_base_images/leaderboard_image.png")
 
-        await channel.send(file=discord.File("welcome_base_images/custom_image.png"))
+        await channel.send(file=discord.File("welcome_base_images/leaderboard_image.png"))
+
+        # delete created leaderboard picture after it was sent to the channel
+        os.remove("welcome_base_images/leaderboard_image.png")
 
 
 async def setup(bot):
