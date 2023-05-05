@@ -51,9 +51,10 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         """
         # will later be changed to != 1
         day_of_the_month = 1
-        if get_day_of_month() != day_of_the_month:
+        if get_day_of_month() != 5:
             return
 
+        FONT_PATH = "arial.ttf"
         # fetch channel object where the leaderboard gets posted
         channel = self.bot.get_channel(1057132842259325029)
         month, year = get_prev_month()
@@ -106,7 +107,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                 draw = ImageDraw.Draw(BASE_IMAGE)
 
                 # member name text
-                font_member_podium = ImageFont.truetype("arial.ttf", 65)
+                font_member_podium = ImageFont.truetype(FONT_PATH, 65)
                 draw.text(
                     (1800, 65 + Y_OFFSET),
                     f"{rank}. {member.name}#{member.discriminator}",
@@ -116,7 +117,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                 )
 
                 # messages count text
-                font_messages_podium = ImageFont.truetype("arial.ttf", 40)
+                font_messages_podium = ImageFont.truetype(FONT_PATH, 40)
                 draw.text(
                     (1800, 110 + Y_OFFSET),
                     f"{abbreviate_number(msgs)} Messages",
@@ -141,7 +142,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                 )
                 draw = ImageDraw.Draw(BASE_IMAGE)
 
-                font_name = ImageFont.truetype("arial.ttf", 130)
+                font_name = ImageFont.truetype(FONT_PATH, 130)
                 draw.text(
                     (400, 130 + Y_OFFSET_PODIUM),
                     f"{rank}. {member.name}#{member.discriminator}",
@@ -150,7 +151,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                     anchor="ls"
                 )
 
-                font_messages = ImageFont.truetype("arial.ttf", 85)
+                font_messages = ImageFont.truetype(FONT_PATH, 85)
                 draw.text(
                     (400, 235 + Y_OFFSET_PODIUM),
                     f"{msgs} Messages",
@@ -159,7 +160,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                     anchor="ls"
                 )
 
-                font_messages = ImageFont.truetype("arial.ttf", 85)
+                font_messages = ImageFont.truetype(FONT_PATH, 85)
                 draw.text(
                     (400, 235 + Y_OFFSET_PODIUM),
                     f"{msgs} Messages",
@@ -171,7 +172,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                 Y_OFFSET_PODIUM += 320
 
         # month name text
-        font_month = ImageFont.truetype("arial.ttf", 220)
+        font_month = ImageFont.truetype(FONT_PATH, 220)
         draw.text(
             (50, 350),
             f"{get_month_name(month)} {year}",
@@ -181,7 +182,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         )
 
         # server name text
-        font_server_name = ImageFont.truetype("arial.ttf", 150)
+        font_server_name = ImageFont.truetype(FONT_PATH, 150)
         draw.text(
             (250, 150),
             server.name,
@@ -193,7 +194,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         # unique chatters count text
         unique_chatters_month = distinctChattersMonth(c_cursor, year, month)
         monthly_server_msgs, monthly_server_chars = monthlyServerMessages(c_cursor, year, month)
-        font_server_stats = ImageFont.truetype("arial.ttf", 95)
+        font_server_stats = ImageFont.truetype(FONT_PATH, 95)
         draw.text(
             (1650, 300),
             f"{unique_chatters_month} Chatters",
