@@ -12,7 +12,7 @@ import sys
 from queries.userchatqueries import *
 from queries.serverchatqueries import *
 from helpers.dateformatting import *
-from helpers.numberformatting import *
+from helpers.numberformatting import abbreviate_number
 
 sys.path.append("queries")
 sys.path.append("helpers")
@@ -29,7 +29,9 @@ def shorten_username(username, max_length=10):
 
 
 def top_20_monthly_chatters(cursor, year, month):
-    # returns top monthly chatters of a particular month in a year
+    """
+    Returns top monthly chatters of a particular month in a year
+    """
     cursor.execute("""
         SELECT Id, SUM(Msgs) AS Msgs
         FROM userchat
@@ -75,7 +77,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         """
         # will later be changed to != 1
         day_of_the_month = 1
-        if get_day_of_month() != 6:
+        if get_day_of_month() != day_of_the_month:
             return
 
         CHANNEL_ID = 869547713132396586
@@ -101,7 +103,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             (192, 192, 192),    # SILVER
             (205, 127, 50),     # BRONZE
         ]
-        BASE_IMAGE = Image.open("base_images/leaderboard_message/leaderboard_base6.png")
+        # HERE YOU CAN SELECT YOUR BASE IMAGE YOURSELF !
+        BASE_IMAGE = Image.open("base_images/leaderboard_message/leaderboard_base2.png")
         BASE_IMAGE = BASE_IMAGE.resize((2560, 1440))
 
         for rank, (id, msgs) in enumerate(top_20_monthly_chatters(c_cursor, year, month), 1):
@@ -178,7 +181,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                     (400, 150 + Y_OFFSET_PODIUM),
                     f"{rank}.{shorten_username(member.name, 10)}",
                     font=font_name,
-                    fill=PODIUM_COLORS[rank-1],
+                    fill=PODIUM_COLORS[rank - 1],
                     anchor="ls"
                 )
 
