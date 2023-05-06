@@ -57,7 +57,7 @@ class Welcome(commands.Cog):
         avatar_outline_image = Image.alpha_composite(avatar_image, outline_image)
 
         # Open the base image
-        base_image = Image.open(f"welcome_base_images/base_image{random.randint(0,25)}.png")
+        base_image = Image.open(f"base_images/welcome_message/base_image{random.randint(0,25)}.png")
 
         # Paste the circular avatar with the outline onto the base image
         base_image.paste(avatar_outline_image, (387, 160), mask=mask)
@@ -68,8 +68,8 @@ class Welcome(commands.Cog):
 
         # Add the user's name to the image
         draw = ImageDraw.Draw(base_image)
-        font = ImageFont.truetype("arial.ttf", 45)
-        font_member_count = ImageFont.truetype("arial.ttf", 30)
+        font = ImageFont.truetype("fonts/arial.ttf", 45)
+        font_member_count = ImageFont.truetype("fonts/arial.ttf", 30)
         draw.text(
             (512, 90),
             f"{member.name}#{member.discriminator} just joined the server.",
@@ -88,11 +88,11 @@ class Welcome(commands.Cog):
         )
 
         # Save the final image
-        base_image.save("welcome_base_images/custom_image.png")
+        base_image.save("base_images/welcome_message_custom.png")
 
         # Send the final image to the user
-        await channel.send(f"Hey <@{member.id}> , welcome to **{member.guild.name}**!", file=discord.File("welcome_base_images/custom_image.png"))
-        os.remove("welcome_base_images/custom_image.png")
+        await channel.send(f"Hey <@{member.id}> , welcome to **{member.guild.name}**!", file=discord.File("base_images/welcome_message_custom.png"))
+        os.remove("base_images/welcome_message_custom.png")
 
 
 async def setup(bot):
