@@ -77,7 +77,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         """
         # will later be changed to != 1
         day_of_the_month = 1
-        if get_day_of_month() != day_of_the_month:
+        if get_day_of_month() != 7:
             return
 
         CHANNEL_ID = 869547713132396586
@@ -104,7 +104,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             (205, 127, 50),     # BRONZE
         ]
         # HERE YOU CAN SELECT YOUR BASE IMAGE YOURSELF !
-        BASE_IMAGE = Image.open("base_images/leaderboard_message/leaderboard_base2.png")
+        BASE_IMAGE = Image.open(f"base_images/leaderboard_message/{month}.png")
         BASE_IMAGE = BASE_IMAGE.resize((2560, 1440))
 
         for rank, (id, msgs) in enumerate(top_20_monthly_chatters(c_cursor, year, month), 1):
@@ -203,6 +203,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             f"{get_month_name(month)} {year}",
             font=font_month,
             fill=(255, 255, 255),
+            stroke_fill=(255, 255, 255),
+            stroke_width=3,
             anchor="rs"
         )
 
@@ -213,6 +215,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             server.name,
             font=font_server_name,
             fill=(255, 255, 255),
+            stroke_fill=(255, 255, 255),
+            stroke_width=3,
             anchor="ls"
         )
 
@@ -225,6 +229,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             f"{unique_chatters_month} Chatters",
             font=font_server_stats,
             fill=(255, 255, 255),
+            stroke_fill=(255, 255, 255),
+            stroke_width=3,
             anchor="ls"
         )
         # messages count text
@@ -233,6 +239,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             f"{abbreviate_number(monthly_server_msgs)} Messages",
             font=font_server_stats,
             fill=(255, 255, 255),
+            stroke_fill=(255, 255, 255),
+            stroke_width=3,
             anchor="ls"
         )
 
