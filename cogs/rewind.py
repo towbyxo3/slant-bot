@@ -100,7 +100,7 @@ def create_rewind_gallery(who, year, server=False):
             draw.line((0, y_offset, max_width, y_offset), fill=(255, 255, 255, 255), width=1)
             y_offset += divider_space
     # write text on top of the image
-    title_font = ImageFont.truetype("arial.ttf", 250)
+    title_font = ImageFont.truetype("fonts/arial.ttf", 250)
     text = f"{who} in {year}"
     text_width, text_height = title_font.getsize(text)
     text_x = (max_width - text_width) / 2  # center the text horizontally
