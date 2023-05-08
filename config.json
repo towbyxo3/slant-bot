@@ -1,8 +1,8 @@
 {
-  "token": "",
-  "join_message": "Hey",
-  "owner(s)": [0000000000000000000000
-
+  "token": "YOUR TOKEN",
+  "join_message": "hi",
+  "owners": [
+    95563800354238464
   ],
   "prefix": [
     "*"
@@ -10,5 +10,9 @@
   "activity": "Prefix: *",
   "activity_type": "playing",
   "status_type": "online",
-  "playing": "PREFIX: *"
+  "playing": "PREFIX: *",
+  "my_guild": 1085334522440188015,
+  "channel_monthly_leaderboard_update":869547713132396586,
+  "channel_all_time_leaderboard_update":869547713132396586
+
 }
