@@ -19,6 +19,8 @@ class Welcome(commands.Cog):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
+        self.my_guild = self.config["my_guild"]
+        self.channel_welcome_picture = self.config["channel_welcome_picture"]
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -28,11 +30,11 @@ class Welcome(commands.Cog):
         member: member who joined guild
         """
 
-        if member.guild.id != 1085334522440188015:
+        if member.guild.id != self.my_guild:
             return
 
         # get channel object and member url
-        channel = self.bot.get_channel(1085356879410102363)
+        channel = self.bot.get_channel(self.my_guild)
         avatar_url = member.display_avatar
         print(avatar_url)
 

@@ -338,6 +338,8 @@ class AvHistory(commands.Cog):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
+        self.channel_avatar_history_images = self.config["channel_avatar_history_images"]
+        self.my_guild = self.config["my_guild"]
 
     @commands.Cog.listener()
     async def on_user_update(self, before, after):
@@ -368,7 +370,7 @@ class AvHistory(commands.Cog):
             try:
                 file_name = f"{av.key}.{'gif' if av.is_animated() else 'png'}"
                 file_bytes = await av.read()
-                channel = self.bot.get_channel(1057132789935394908)
+                channel = self.bot.get_channel(self.channel_avatar_history_images)
                 text = f"{after}'s avatar (ID: {after.id})"
                 member = channel.guild.get_member(after.id)
                 if member:
@@ -433,7 +435,7 @@ class AvHistory(commands.Cog):
                 if url_not_in_DB(avh_cursor, str(av)):
                     file_name = f"{av.key}.{'gif' if av.is_animated() else 'png'}"
                     file_bytes = await av.read()
-                    channel = self.bot.get_channel(1057132789935394908)
+                    channel = self.bot.get_channel(self.channel_avatar_history_images)
                     text = f"{member}'s avatar (ID: {member.id})"
                     member = channel.guild.get_member(member.id)
                     if member:
@@ -509,10 +511,10 @@ class AvHistory(commands.Cog):
 
         # print(ctx.guild.members)
 
-        channel = self.bot.get_channel(1057132789935394908)
+        channel = self.bot.get_channel(self.channel_avatar_history_images)
         now = str(datetime.datetime.now())
 
-        guild = self.bot.get_guild(739175633673781259)
+        guild = self.bot.get_guild(self.my_guild)
         new = 0
 
         print(len(guild.members[-150:-130]))

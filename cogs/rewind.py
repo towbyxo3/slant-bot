@@ -25,30 +25,6 @@ sys.path.append("queries")
 sys.path.append("helpers")
 
 
-async def send_load_message(message, stage, stages):
-    """
-    Sends updated stage of the loading bar and returns new stage if
-    loading hasnt finished yet
-
-    message: message object that gets updated and eventually deleted
-    stage: current stage
-    stages:
-    """
-    stage += 1
-    stages_left = stages - stage
-
-    # create loading bar text using emojis
-    loading_bar = f"Loading... {':green_square:' * stage}{':black_large_square:' * stages_left}"
-    await message.edit(content=loading_bar)
-
-    # we reached the last stage
-    if stage == stages:
-        await asyncio.sleep(1)
-        await message.delete()
-        return
-    return stage
-
-
 def create_rewind_gallery(who, year, server=False):
     """
     Creates a gallery out of the images in a directory sorted by creation date.
@@ -192,7 +168,7 @@ def days_in_month(month, year):
     return calendar.monthrange(year, month)[1]
 
 
-class rewindoview(discord.ui.View):
+class RewindView(discord.ui.View):
     """
     View for year rewind
     """
@@ -342,6 +318,7 @@ class Rewind(commands.Cog):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
+        self.channel_rewind_images = self.config["channel_rewind_images"]
 
     @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command()
@@ -379,7 +356,8 @@ class Rewind(commands.Cog):
 
         embed_list = []
 
-        channel = self.bot.get_channel(1066582054503993364)
+        channel = self.bot.get_channel(self.channel_rewind_images)
+        await ctx.message.add_reaction('👍')
 
         db = sqlite3.connect("chat.db")
 
@@ -394,13 +372,6 @@ class Rewind(commands.Cog):
             embed = discord.Embed(description=f"No Messages in {year}", color=discord.Color.red())
             await ctx.send(embed=embed)
             return
-
-        # create configuration to our load bar.
-        loading_stage = 0
-        loading_stages = 8
-        message = await ctx.send(f'Loading... {":black_large_square:" * loading_stages}')
-
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
 
         yearly_days = yearlyDaysWhereUserSentMessage(db.cursor(), member_id, str(year))
         year_amount_days = get_days_in_year(year)
@@ -437,9 +408,7 @@ class Rewind(commands.Cog):
         heatmap_calendar["url"] = await convert_file_to_discord_url("rewind_images/user/heatmap_calendar_year.png", channel)
         heatmap_calendar["footer"] = None
 
-        embed_list.append(heatmap_calendar)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-        ############################################
+        embed_list.append(heatmap_calendar)        ############################################
         # MONTH CHART
         ############################################
 
@@ -460,9 +429,7 @@ class Rewind(commands.Cog):
         month_chart["url"] = await convert_file_to_discord_url("rewind_images/user/chart_month.png", channel)
         month_chart["footer"] = None
 
-        embed_list.append(month_chart)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-        ############################################
+        embed_list.append(month_chart)        ############################################
         # YEARS/MONTHS COMPARISON
         ############################################
         create_heatmap_years_months(db, member_id, year, False)
@@ -477,9 +444,7 @@ class Rewind(commands.Cog):
         heatmap_years_months["url"] = await convert_file_to_discord_url("rewind_images/user/heatmap_years_months.png", channel)
         heatmap_years_months["footer"] = None
 
-        embed_list.append(heatmap_years_months)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-        ############################################
+        embed_list.append(heatmap_years_months)        ############################################
         # HOUR OF WEEKDAY
         ############################################
         top1_hour, top1_weekday, top_1_counts = create_heatmap_hour_of_weekday(
@@ -495,9 +460,7 @@ class Rewind(commands.Cog):
         heatmap_weekday_hour["url"] = await convert_file_to_discord_url("rewind_images/user/heatmap_weekday_hour.png", channel)
         heatmap_weekday_hour["footer"] = None
 
-        embed_list.append(heatmap_weekday_hour)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-        ############################################
+        embed_list.append(heatmap_weekday_hour)        ############################################
         # HOUR OF DAY
         ############################################
         top1_day_hour = create_heatmap_hour_of_day(db, member_id, year, False)
@@ -511,9 +474,7 @@ class Rewind(commands.Cog):
         heatmap_daytime["url"] = await convert_file_to_discord_url("rewind_images/user/heatmap_daytime.png", channel)
         heatmap_daytime["footer"] = None
 
-        embed_list.append(heatmap_daytime)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-        ############################################
+        embed_list.append(heatmap_daytime)        ############################################
         # WEEKDAY
         ############################################
         highest_count_weekday = create_chart_weekday(db, member_id, year, False)
@@ -528,13 +489,9 @@ class Rewind(commands.Cog):
         chart_weekday["footer"] = None
 
         embed_list.append(chart_weekday)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         create_rewind_gallery(member.name, year, False)
         gallery_url = await convert_file_to_discord_url("rewind_images/rewind_gallery_user.png", channel)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
-        pagination_view = rewindoview(timeout=120)
+        pagination_view = RewindView(timeout=120)
         pagination_view.data = embed_list
         pagination_view.author_id = ctx.author.id
         pagination_view.main_info = {"year": year, "who": member}
@@ -566,7 +523,8 @@ class Rewind(commands.Cog):
 
         member_id = ctx.author.id
 
-        channel = self.bot.get_channel(1066582054503993364)
+        channel = self.bot.get_channel(self.channel_rewind_images)
+        await ctx.message.add_reaction('👍')
 
         embed_list = []
 
@@ -584,13 +542,6 @@ class Rewind(commands.Cog):
             return
 
         # await ctx.message.add_reaction("👍")
-
-        # create configuration to our load bar.
-        loading_stage = 0
-        loading_stages = 8
-        message = await ctx.send(f'Loading... {":black_large_square:" * loading_stages}')
-
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
 
         yearly_days = dailyMessagesYearCounter(db.cursor(), str(year))
         year_amount_days = get_days_in_year(year)
@@ -621,8 +572,6 @@ class Rewind(commands.Cog):
         heatmap_calendar["footer"] = None
 
         embed_list.append(heatmap_calendar)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         ############################################
         # MONTH CHART
         ############################################
@@ -644,8 +593,6 @@ class Rewind(commands.Cog):
         month_chart["footer"] = None
 
         embed_list.append(month_chart)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         ############################################
         # YEARS/MONTHS COMPARISON
         ############################################
@@ -667,8 +614,6 @@ class Rewind(commands.Cog):
         heatmap_years_months["footer"] = None
 
         embed_list.append(heatmap_years_months)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         ############################################
         # HOUR OF WEEKDAY
         ############################################
@@ -686,8 +631,6 @@ class Rewind(commands.Cog):
         heatmap_weekday_hour["footer"] = None
 
         embed_list.append(heatmap_weekday_hour)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         ############################################
         # HOUR OF DAY
         ############################################
@@ -703,8 +646,6 @@ class Rewind(commands.Cog):
         heatmap_daytime["footer"] = None
 
         embed_list.append(heatmap_daytime)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         ############################################
         # WEEKDAY
         ############################################
@@ -720,14 +661,10 @@ class Rewind(commands.Cog):
         chart_weekday["footer"] = None
 
         embed_list.append(chart_weekday)
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
         create_rewind_gallery(ctx.guild.name, year, True)
         gallery_url = await convert_file_to_discord_url("rewind_images/rewind_gallery_server.png", channel)
 
-        loading_stage = await send_load_message(message, loading_stage, loading_stages)
-
-        pagination_view = rewindoview(timeout=120)
+        pagination_view = RewindView(timeout=120)
         pagination_view.data = embed_list
         pagination_view.author_id = ctx.author.id
         pagination_view.main_info = {"year": year, "who": ctx.guild}
