@@ -21,8 +21,14 @@ Automatically downloads any TikTok links and posts the video as reply to the ori
 
 ![TT downloader example](./README/14_TIKTOK_downloader.PNG)
 
+## Monthly Chat Leaderboard Updates
+On the 1st day of every month, the previous month's top 20 chatters are showcased.
+
+![Leaderboard update examples](./README/16_leaderboard_updates.gif)
+
 ## Chat Leaderboard
 Showcases Members with most messages in a time period (weekly, monthly, yearly or all-time)
+
 ![Chat LB example](./README/04_leaderboard_chat.gif)
 
 ## Crowns
@@ -45,6 +51,11 @@ Showcases the profile pictures used by a member since joining the server.
 Showcases various chat stats graphically including most active weekday of the week, time of the day etc..
 
 ![Rewind example](./README/06_rewind.gif)
+
+## Serverpeaks
+Showcases the days, weeks, months and years where most messages were sent.
+
+![Server peak examples](./README/17_serverpeaks.PNG)
 
 ## Network
 Showcases a network graph with members who chat at similar times as the member.
@@ -82,11 +93,17 @@ Shows basic information about a country.
 `git clone https://github.com/towbyxo3/slant-python-discord-bot.git`
 ## 2. Install packages 
 `pip install -r requirements.txt`
-## 3. Modify config.json
-Insert your bots token and your ID into the config.json file and modify settings to your liking.
-## 4. Run the BOT.
+## 3. Create a new Discord server
+The new server is used to store various picture links.
+It's recommended to create text channels named "avatar_history_images" and "rewind_images" which will act as storage.  
+## 4. Modify config.json
+Insert your bots token and your ID into the config.json file and modify bot display settings.
+Fill out the rest of the JSON file. 
+## 5. Run the BOT.
 `python3 index.py`  
 or  
 `python index.py`
+
+Add tobi#1918 on Discord if you need help.
 
 
