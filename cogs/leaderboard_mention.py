@@ -5,7 +5,6 @@ from discord.ext import commands
 import sqlite3
 import sys
 import os
-from queries.wordqueries import *
 from helpers.dateformatting import *
 from helpers.numberformatting import *
 

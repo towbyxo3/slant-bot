@@ -7,9 +7,45 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import sys
-from helpers.numberformatting import abbreviate_number
+from helpers.dateformatting import *
+from helpers.numberformatting import *
 
 sys.path.append("helpers")
+sys.path.append("queries")
+
+
+def get_vocab_user(cursor, word):
+    print(word)
+    cursor.execute("""
+            SELECT id, COUNT(id)
+            FROM words
+            WHERE word = ?
+            GROUP BY id
+            ORDER BY COUNT(id) DESC
+            LIMIT 10
+            """, (word.upper(), ))
+    rows = cursor.fetchall()
+    return rows
+
+
+def get_word_frequency_server(cursor, word):
+    cursor.execute("""
+            SELECT COUNT(id)
+            FROM words
+            WHERE word = ?
+            """, (word.upper(), ))
+    count = cursor.fetchall()[0][0]
+    return count
+
+
+def get_word_frequency_user(cursor, id, word):
+    cursor.execute("""
+        SELECT COUNT(word)
+        FROM words
+        WHERE id = ? AND word = ?
+        """, (id, word.upper()))
+    count = cursor.fetchall()[0][0]
+    return count
 
 
 def get_most_frequent_words(m_cursor, length):
@@ -257,6 +293,51 @@ class Wordcloud(commands.Cog):
         # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
         await ctx.send(embed=embed, file=file)
 
+
+    @commands.command()
+    async def said(self, ctx, word=None):
+        if word is None:
+            await ctx.send("Please add a word.\n*vocablb **word**")
+            return
+
+        member = ctx.author
+        user = member.id
+
+        m_DB = sqlite3.connect('messages.db')
+        m_cursor = m_DB.cursor()
+
+        embed = discord.Embed(color=discord.Color.blue())
+        embed.set_thumbnail(url=ctx.guild.icon)
+        word_count = get_word_frequency_server(m_cursor, word)
+
+        topten_text = ""
+        rank = 1
+        top_10_total = 0
+
+        author_word_count = get_word_frequency_user(m_cursor, user, word)
+
+        for user, frequency in get_vocab_user(m_cursor, word):
+            topten_text += f"`{rank}.` <@{user}> | {abbreviate_number(frequency)} \n"
+            rank += 1
+            top_10_total += frequency
+        if len(topten_text) == 0:
+            await ctx.send("Nobody has used this word yet.")
+            return
+
+        topten_text += (
+            f"\n**Top {rank-1} Users:**\n"
+            f"{abbreviate_number(top_10_total)} ({int(top_10_total/word_count*100)}%) out of "
+            f"{abbreviate_number(word_count)} {word.upper()}s"
+        )
+
+        embed.add_field(
+            name=f"{word.upper()} Leaderboard",
+            value=topten_text, inline=False
+        )
+        embed.set_footer(
+            text=f"{member.display_name} | {abbreviate_number(author_word_count)}", icon_url=member.avatar)
+
+        await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Wordcloud(bot))

@@ -182,58 +182,6 @@ class Moderator(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @permissions.has_permissions(ban_members=True)
-    async def find(self, ctx: Context[BotT]):
-        """ Finds a user within your search term """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help(str(ctx.command))
-
-    @find.command(name="playing")
-    async def find_playing(self, ctx: Context[BotT], *, search: str):
-        loop = []
-        for i in ctx.guild.members:
-            if i.activities and (not i.bot):
-                for g in i.activities:
-                    if g.name and (search.lower() in g.name.lower()):
-                        loop.append(f"{i} | {type(g).__name__}: {g.name} ({i.id})")
-
-        await default.pretty_results(
-            ctx, "playing", f"Found **{len(loop)}** on your search for **{search}**", loop
-        )
-
-    @find.command(name="username", aliases=["name"])
-    async def find_name(self, ctx: Context[BotT], *, search: str):
-        loop = [f"{i} ({i.id})" for i in ctx.guild.members if search.lower() in i.name.lower() and not i.bot]
-        await default.pretty_results(
-            ctx, "name", f"Found **{len(loop)}** on your search for **{search}**", loop
-        )
-
-    @find.command(name="nickname", aliases=["nick"])
-    async def find_nickname(self, ctx: Context[BotT], *, search: str):
-        loop = [f"{i.nick} | {i} ({i.id})" for i in ctx.guild.members if i.nick if (search.lower() in i.nick.lower()) and not i.bot]
-        await default.pretty_results(
-            ctx, "name", f"Found **{len(loop)}** on your search for **{search}**", loop
-        )
-
-    @find.command(name="id")
-    async def find_id(self, ctx: Context[BotT], *, search: int):
-        loop = [f"{i} | {i} ({i.id})" for i in ctx.guild.members if (str(search) in str(i.id)) and not i.bot]
-        await default.pretty_results(
-            ctx, "name", f"Found **{len(loop)}** on your search for **{search}**", loop
-        )
-
-    @find.command(name="discriminator", aliases=["discrim"])
-    async def find_discriminator(self, ctx: Context[BotT], *, search: str):
-        if not len(search) == 4 or not re.compile("^[0-9]*$").search(search):
-            return await ctx.send("You must provide exactly 4 digits")
-
-        loop = [f"{i} ({i.id})" for i in ctx.guild.members if search == i.discriminator]
-        await default.pretty_results(
-            ctx, "discriminator", f"Found **{len(loop)}** on your search for **{search}**", loop
-        )
-
-    @commands.group()
-    @commands.guild_only()
     @commands.max_concurrency(1, per=commands.BucketType.guild)
     @permissions.has_permissions(manage_messages=True)
     async def prune(self, ctx: Context[BotT]):
