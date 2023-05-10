@@ -34,7 +34,7 @@ class Welcome(commands.Cog):
             return
 
         # get channel object and member url
-        channel = self.bot.get_channel(self.my_guild)
+        channel = self.bot.get_channel(self.channel_welcome_picture)
         avatar_url = member.display_avatar
         print(avatar_url)
 
