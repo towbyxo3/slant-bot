@@ -1,8 +1,7 @@
-import sqlite3
 import wordcloud
 
 
-def getTopWords(cursor):
+def get_top_words_server(cursor):
     # Connect to the database
 
     # Get the list of stopwords from the wordcloud library
@@ -27,7 +26,7 @@ def getTopWords(cursor):
     return top_words
 
 
-def getTopWordsUser(cursor, id):
+def get_top_words_user(cursor, id):
 
     # Get the list of stopwords from the wordcloud library
     stopwords = wordcloud.STOPWORDS
@@ -51,7 +50,7 @@ def getTopWordsUser(cursor, id):
     return top_words
 
 
-def getTotalWordCountUser(cursor, id):
+def get_word_sample_size_user(cursor, id):
     cursor.execute("""
             SELECT COUNT(id)
             FROM words
@@ -61,7 +60,7 @@ def getTotalWordCountUser(cursor, id):
     return word_count
 
 
-def getUserDistinctWords(cursor, id):
+def get_distinct_words_count_user(cursor, id):
     cursor.execute("""
         SELECT COUNT(DISTINCT Word)
         FROM words
@@ -71,7 +70,7 @@ def getUserDistinctWords(cursor, id):
     return distinct_words
 
 
-def getTotalWordCountServer(cursor):
+def get_word_sample_size_server(cursor):
 
     cursor.execute("""
             SELECT COUNT(id)
@@ -81,15 +80,7 @@ def getTotalWordCountServer(cursor):
     return word_count
 
 
-"""
-rank = 1
-for word, count in getTopWordsUser():
-    print(rank, word, count)
-    rank+=1
-"""
-
-
-def getServerDistinctWords(cursor):
+def get_distinct_words_count_server(cursor):
     cursor.execute("""
         SELECT COUNT(DISTINCT Word)
         FROM words
@@ -98,17 +89,8 @@ def getServerDistinctWords(cursor):
     return distinct_words
 
 
-def getWordUserFrequency(cursor, id, word):
-    cursor.execute("""
-            SELECT COUNT(id)
-            FROM words
-            WHERE ID = ? AND word = ?
-            """, (id, word.upper()))
-    word_count = cursor.fetchall()[0][0]
-    return word_count
-
-
-def getWordLeaderboardUser(cursor, word):
+def get_vocab_user(cursor, word):
+    print(word)
     cursor.execute("""
             SELECT id, COUNT(id)
             FROM words
@@ -121,7 +103,7 @@ def getWordLeaderboardUser(cursor, word):
     return rows
 
 
-def getWordCount(cursor, word):
+def get_word_frequency_server(cursor, word):
     cursor.execute("""
             SELECT COUNT(id)
             FROM words
@@ -131,7 +113,7 @@ def getWordCount(cursor, word):
     return count
 
 
-def getFrequencyWordOfUser(cursor, id, word):
+def get_word_frequency_user(cursor, id, word):
     cursor.execute("""
         SELECT COUNT(word)
         FROM words

@@ -17,7 +17,7 @@ import math
 import pycountry
 
 
-def country_api(country):
+def get_country_information(country):
     """
     API function that gathers information about a country and returns them as tuple.
     API source: https://restcountries.com/
@@ -50,14 +50,14 @@ def country_api(country):
     flag_data = data[0]["flags"]["png"]  # flag as pic
 
     populatation = data[0]["population"]
-    popu_short = human_format(populatation)  # population in human readable format
+    popu_short = convert_to_readable_format(populatation)  # population in human readable format
     area = data[0]["area"] / 1000
     area_short = '{:,}'.format(area).replace(',', '.') + " km²"  # area human-readable
 
     return flag_icon, c_name_s, c_name_l, capital, curr_name, currr_symbol, language_list, flag_data, popu_short, area_short, region, region_s
 
 
-def human_format(num):
+def convert_to_readable_format(num):
     """
     converts population numbers to readable formats using K, M. and returns them as string.
 
@@ -88,18 +88,8 @@ class Information(commands.Cog):
         message = await ctx.send("🏓 Pong")
         await message.edit(content=f"🏓 WS: {before_ws}ms")
 
-    @commands.command(aliases=["joinme", "join", "botinvite"])
-    async def invitebot(self, ctx: Context[BotT]):
-        """ Invite me to your server """
-        """
-            await ctx.send("\n".join([
-            f"**{ctx.author.name}**, use this URL to invite me",
-            f"<{discord.utils.oauth_url(self.bot.user.id)}>"
-        ]))"""
-        await ctx.send("B40-only bot, sorry.")
-
     @commands.command()
-    async def inviteAll(self, ctx):
+    async def myservers(self, ctx):
         # server = self.bot.get_guild(865385063792771092)
         invites = []
         for guild in self.bot.guilds:
@@ -160,7 +150,7 @@ class Information(commands.Cog):
         Returns extensive stats of a country: country [country name]
         """
 
-        flag_icon, c_name_s, c_name_l, capital, curr_name, currr_symbol, language_list, flag_data, popu_short, area_short, region, region_s = country_api(
+        flag_icon, c_name_s, c_name_l, capital, curr_name, currr_symbol, language_list, flag_data, popu_short, area_short, region, region_s = get_country_information(
             args)
         shord_field = c_name_s + " " + flag_icon
 

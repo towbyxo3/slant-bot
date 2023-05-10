@@ -22,19 +22,19 @@ class Serverpeak(discord.ui.View):
         super().__init__()
         self.ctx = ctx
 
-    @discord.ui.button(label="Day", style=discord.ButtonStyle.blurple)
-    async def Day(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Days", style=discord.ButtonStyle.blurple)
+    async def days(self, interaction: discord.Interaction, button: discord.ui.Button):
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        days = dayEntries(c_cursor)
+        days = get_day_chat_entries_count(c_cursor)
 
         embed = discord.Embed(
             color=discord.Color.blue(),
             timestamp=self.ctx.message.created_at)
         embed.set_thumbnail(url=self.ctx.guild.icon)
         embed.set_author(
-            name=f"""
+            name="""
                 Daily Messages Peak
                 """,
             icon_url=self.ctx.guild.icon
@@ -43,9 +43,9 @@ class Serverpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, msgs in dayMessagesPeak(c_cursor):
-            unique_chatters_day = distinctChattersDay(c_cursor, date)
-            date = DbYYYformat(date)
+        for date, msgs in get_top_server_msgs_day(c_cursor):
+            unique_chatters_day = get_distinct_chatters_count_day(c_cursor, date)
+            date = format_YMD_to_DMY(date)
             topten_text += f"`{rank}.` **{abbreviate_number(msgs)}** Msgs by **{unique_chatters_day}** Members | {date} \n"
             rank += 1
 
@@ -58,8 +58,8 @@ class Serverpeak(discord.ui.View):
         await interaction.message.edit(embed=embed)
         await interaction.response.defer()
 
-    @discord.ui.button(label="Week", style=discord.ButtonStyle.blurple)
-    async def Week(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Weeks", style=discord.ButtonStyle.blurple)
+    async def weeks(self, interaction: discord.Interaction, button: discord.ui.Button):
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
@@ -76,13 +76,13 @@ class Serverpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, msgs in weekMessagesPeak(c_cursor):
+        for date, msgs in get_top_server_msgs_week(c_cursor):
             year, week = date.split('-')
-            unique_chatters_week = distinctChattersWeek(c_cursor, year, week)
+            unique_chatters_week = get_distinct_chatters_count_week(c_cursor, year, week)
             topten_text += f"`{rank}.` **{abbreviate_number(msgs)}** Msgs by **{unique_chatters_week}** Members | W{week} {year}\n"
             rank += 1
 
-        weeks = weekEntries(c_cursor)
+        weeks = get_week_chat_entries_count(c_cursor)
         embed.add_field(
             name="Rank | Messages | Week",
             value=topten_text)
@@ -91,8 +91,8 @@ class Serverpeak(discord.ui.View):
         await interaction.message.edit(embed=embed)
         await interaction.response.defer()
 
-    @discord.ui.button(label="Month", style=discord.ButtonStyle.blurple)
-    async def Month(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Months", style=discord.ButtonStyle.blurple)
+    async def months(self, interaction: discord.Interaction, button: discord.ui.Button):
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
@@ -109,14 +109,14 @@ class Serverpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, msgs in monthMessagesPeak(c_cursor):
+        for date, msgs in get_top_server_msgs_month(c_cursor):
             year, month = date.split('-')
-            unique_chatters_month = distinctChattersMonth(c_cursor, year, month)
+            unique_chatters_month = get_distinct_chatters_count_month(c_cursor, year, month)
             month = get_month_name(month)[:3]
             topten_text += f"`{rank}.` **{abbreviate_number(msgs)}** Msgs by **{unique_chatters_month}** Members | {month} {year}\n"
             rank += 1
 
-        months = monthEntries(c_cursor)
+        months = get_month_chat_entries_count(c_cursor)
         embed.add_field(
             name="Rank | Messages | Month",
             value=topten_text)
@@ -125,8 +125,8 @@ class Serverpeak(discord.ui.View):
         await interaction.message.edit(embed=embed)
         await interaction.response.defer()
 
-    @discord.ui.button(label="Year", style=discord.ButtonStyle.blurple)
-    async def Year(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Years", style=discord.ButtonStyle.blurple)
+    async def years(self, interaction: discord.Interaction, button: discord.ui.Button):
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
@@ -143,12 +143,12 @@ class Serverpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, msgs in yearMessagesPeak(c_cursor):
-            unique_chatters_year = distinctChattersYear(c_cursor, date)
+        for date, msgs in get_top_server_msgs_year(c_cursor):
+            unique_chatters_year = get_distinct_chatters_count_year(c_cursor, date)
             topten_text += f"`{rank}.` **{abbreviate_number(msgs)}** Msgs by **{unique_chatters_year}** Members | {date}\n"
             rank += 1
 
-        years = yearEntries(c_cursor)
+        years = get_year_chat_entries_count(c_cursor)
         embed.add_field(
             name="Rank | Messages | Year",
             value=topten_text)
@@ -165,7 +165,7 @@ class serverstats(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command()
+    @commands.command(aliases=["serverpeaks"])
     async def serverpeak(self, ctx):
         """
         Most Messages within a timeframe

@@ -1,7 +1,4 @@
-import sqlite3
-
-
-def barMonthMessages(cursor, months):
+def get_msgs_by_month(cursor, months):
     if months is None:
         cursor.execute("""
             SELECT
@@ -52,7 +49,7 @@ def barMonthMessages(cursor, months):
     return data
 
 
-def barMonthMessagesUser(cursor, id, year):
+def get_user_msgs_by_month(cursor, id, year):
     if year is None:
 
         cursor.execute("""
@@ -105,7 +102,7 @@ def barMonthMessagesUser(cursor, id, year):
     return data
 
 
-def serverMessagesByWeek(cursor, months):
+def get_server_msgs_by_week(cursor, months):
     if months is None:
         cursor.execute("""
             SELECT
@@ -164,7 +161,7 @@ def serverMessagesByWeek(cursor, months):
     return data
 
 
-def serverMessagesUserByWeek(cursor, id, year):
+def get_svuser_msgs_by_week(cursor, id, year):
     if year is None:
         cursor.execute("""
             SELECT
@@ -234,7 +231,7 @@ def messagesPerMonth(cursor):
     return data
 
 
-def dailyServerMessages(cursor, date):
+def get_daily_server_msgs(cursor, date):
     """
     Returns daily messages of a server
     """
@@ -248,19 +245,3 @@ def dailyServerMessages(cursor, date):
     if len(rows) == 0:
         return 0
     return rows[0][0]
-
-
-def userDailyMessages(cursor, date, id):
-    """
-    returns daily messages of a user
-    """
-    cursor.execute("""
-        SELECT Date, Msgs
-        FROM userchat
-        WHERE Date = ? and Id = ?
-        GROUP BY Id
-        """, (date, id))
-    rows = cursor.fetchall()
-    if len(rows) == 0:
-        return ((date, 0),)
-    return rows

@@ -34,7 +34,7 @@ def get_month_name(month):
     return month_names[int(month) - 1]
 
 
-def DbYYYformat(date_str):
+def format_YMD_to_DMY(date_str):
     # 2020-08-13 -> "13. Aug 2020"
     date = datetime.datetime.strptime(date_str, "%Y-%m-%d")
     month_name = date.strftime("%b")

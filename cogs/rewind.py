@@ -13,7 +13,7 @@ from helpers.numberformatting import abbreviate_number
 from datascience.heatmapscripts import *
 from queries.userchatqueries import *
 from queries.serverchatqueries import *
-from helpers.dateformatting import DbYYYformat
+from helpers.dateformatting import format_YMD_to_DMY
 from datascience.chartscripts import create_chart_weekday, create_chart_month
 from PIL import Image, ImageDraw, ImageFont
 import asyncio
@@ -366,28 +366,28 @@ class Rewind(commands.Cog):
         ############################################
         create_heatmap_calendar(db, member_id, year, False)
 
-        yearly_user_msgs = yearlyUserMessages(db.cursor(), member_id,
+        yearly_user_msgs = get_user_msgs_count_year(db.cursor(), member_id,
                                               str(year))
         if yearly_user_msgs is None:
             embed = discord.Embed(description=f"No Messages in {year}", color=discord.Color.red())
             await ctx.send(embed=embed)
             return
 
-        yearly_days = yearlyDaysWhereUserSentMessage(db.cursor(), member_id, str(year))
+        yearly_days = get_user_active_days_count_in_year(db.cursor(), member_id, str(year))
         year_amount_days = get_days_in_year(year)
         percentage_active_of_year = round(yearly_days / year_amount_days * 100,
                                           1)
         messages_per_day = round(yearly_user_msgs / year_amount_days, 1)
-        year_rank = TopYearlyRank(db.cursor(), str(year), member_id)[0]
+        year_rank = get_user_rank_top_chatters_year(db.cursor(), str(year), member_id)[0]
 
-        yearly_user_msgs = yearlyUserMessages(db.cursor(), member_id,
+        yearly_user_msgs = get_user_msgs_count_year(db.cursor(), member_id,
                                               str(year))
-        yearly_days = yearlyDaysWhereUserSentMessage(db.cursor(), member_id,
+        yearly_days = get_user_active_days_count_in_year(db.cursor(), member_id,
                                                      str(year))
 
-        peak_date, peak_msgs = yearlyMessagesUserPeak(db.cursor(), member_id,
+        peak_date, peak_msgs = get_user_daily_msg_peaks_in_year(db.cursor(), member_id,
                                                       str(year))
-        peak_month, peak_month_msgs = yearlyMessagesUserPeakMonth(
+        peak_month, peak_month_msgs = get_user_monthly_msg_peaks_in_year(
             db.cursor(), member_id, str(year))
         peak_month_index = peak_month[5:7]
         month_name = get_month_name(int(peak_month_index))
@@ -400,7 +400,7 @@ class Rewind(commands.Cog):
             f"{year} Leaderboard: #{year_rank}\n"
             f"Texted on {yearly_days} out of {year_amount_days} ({percentage_active_of_year}%) Days\n"
             f"~{messages_per_day} Messages per Day\n"
-            f"Day peak: {DbYYYformat(peak_date)} ({abbreviate_number(peak_msgs)} Messages)\n"
+            f"Day peak: {format_YMD_to_DMY(peak_date)} ({abbreviate_number(peak_msgs)} Messages)\n"
             f"Month peak: {month_name} ({abbreviate_number(peak_month_msgs)} Messages)"
         )
         heatmap_calendar["thumbnail"] = member.avatar
@@ -434,7 +434,7 @@ class Rewind(commands.Cog):
         ############################################
         create_heatmap_years_months(db, member_id, year, False)
 
-        year_rank = userYearMessagesRank(db.cursor(), member_id, str(year))
+        year_rank = get_user_rank_top_chatters_year_rewind(db.cursor(), member_id, str(year))
 
         heatmap_years_months = {}
         heatmap_years_months["title"] = "Year Comparison"
@@ -535,7 +535,7 @@ class Rewind(commands.Cog):
         ############################################
         create_heatmap_calendar(db, member_id, year, True)
 
-        yearly_user_msgs, yearly_chars = yearlyServerMessages(db.cursor(), str(year))
+        yearly_user_msgs, yearly_chars = get_yearly_server_msgs(db.cursor(), str(year))
         if yearly_user_msgs is None:
             embed = discord.Embed(description=f"No Messages in {year}", color=discord.Color.red())
             await ctx.send(embed=embed)
@@ -543,16 +543,16 @@ class Rewind(commands.Cog):
 
         # await ctx.message.add_reaction("👍")
 
-        yearly_days = dailyMessagesYearCounter(db.cursor(), str(year))
+        yearly_days = get_chat_active_days_count_in_year(db.cursor(), str(year))
         year_amount_days = get_days_in_year(year)
         percentage_active_of_year = round(yearly_days / year_amount_days * 100, 1)
 
-        unique_chatters = distinctChattersYear(db.cursor(), str(year))
+        unique_chatters = get_distinct_chatters_count_year(db.cursor(), str(year))
 
         messages_per_day = round(yearly_user_msgs / year_amount_days, 1)
 
-        peak_date, peak_msgs = yearlyMessagesPeak(db.cursor(), str(year))
-        peak_month, peak_month_msgs = yearlyMessagesPeakMonth(db.cursor(), str(year))
+        peak_date, peak_msgs = get_server_day_peak_in_year(db.cursor(), str(year))
+        peak_month, peak_month_msgs = get_server_month_peak_in_year(db.cursor(), str(year))
         peak_month_index = peak_month[5:7]
         month_name = get_month_name(int(peak_month_index))
         peak_month_days = days_in_month(int(peak_month_index), year)
@@ -563,7 +563,7 @@ class Rewind(commands.Cog):
             f"{abbreviate_number(yearly_user_msgs)} Messages were sent by {unique_chatters} unique members.\n"
             f"Members chatted on {yearly_days} out of {year_amount_days} ({percentage_active_of_year}%) Days\n"
             f"~{messages_per_day} Messages per Day\n"
-            f"Day peak: {DbYYYformat(peak_date)} ({abbreviate_number(peak_msgs)} Messages)\n"
+            f"Day peak: {format_YMD_to_DMY(peak_date)} ({abbreviate_number(peak_msgs)} Messages)\n"
             f"Month peak: {month_name} ({abbreviate_number(peak_month_msgs)} Messages)"
         )
         heatmap_calendar["thumbnail"] = ctx.guild.icon
@@ -599,7 +599,7 @@ class Rewind(commands.Cog):
 
         create_heatmap_years_months(db, member_id, year, True)
 
-        year_rank = YearServerMessagesRank(db.cursor(), str(year))
+        year_rank = get_server_year_peak_rank(db.cursor(), str(year))
 
         embed = discord.Embed(description=f"{year} was {ctx.guild.name}'s  #{year_rank} year")
         # Set the image URL

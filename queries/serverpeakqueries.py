@@ -1,7 +1,4 @@
-import sqlite3
-
-
-def dayMessagesPeak(cursor):
+def get_top_server_msgs_day(cursor):
     cursor.execute("""
         SELECT Date, Msgs
         FROM serverchat
@@ -12,7 +9,7 @@ def dayMessagesPeak(cursor):
     return rows
 
 
-def weekMessagesPeak(cursor):
+def get_top_server_msgs_week(cursor):
     cursor.execute("""
         SELECT strftime('%Y-%W', "Date") as week, SUM("Msgs") as total_msgs
         FROM serverchat
@@ -24,9 +21,7 @@ def weekMessagesPeak(cursor):
     return rows
 
 
-
-
-def monthMessagesPeak(cursor):
+def get_top_server_msgs_month(cursor):
     cursor.execute("""
     SELECT strftime('%Y-%m', "Date") as month, SUM("Msgs") as total_msgs
     FROM serverchat
@@ -38,7 +33,7 @@ def monthMessagesPeak(cursor):
     return rows
 
 
-def yearMessagesPeak(cursor):
+def get_top_server_msgs_year(cursor):
     cursor.execute("""
         SELECT strftime('%Y', "Date") as year, SUM("Msgs") as total_msgs
         FROM serverchat

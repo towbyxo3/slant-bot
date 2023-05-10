@@ -34,14 +34,14 @@ class Words(commands.Cog):
             color=discord.Color.blue()
         )
         embed.set_thumbnail(url=ctx.guild.icon)
-        server_word_count = getTotalWordCountServer(m_cursor)
-        server_distinct_words = getServerDistinctWords(m_cursor)
+        server_word_count = get_word_sample_size_server(m_cursor)
+        server_distinct_words = get_distinct_words_count_server(m_cursor)
 
         topten_text = "\n"
         rank = 1
         top_10_total = 0
 
-        for word, frequency in getTopWords(m_cursor):
+        for word, frequency in get_top_words_server(m_cursor):
             topten_text += f"**{rank}**. `{word.lower()}` ~ {abbreviate_number(frequency)} \n"
             rank += 1
             top_10_total += frequency
@@ -74,14 +74,14 @@ class Words(commands.Cog):
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=member.display_avatar)
 
-        user_word_count = getTotalWordCountUser(m_cursor, user)
-        user_distinct_words = getUserDistinctWords(m_cursor, user)
+        user_word_count = get_word_sample_size_user(m_cursor, user)
+        user_distinct_words = get_distinct_words_count_user(m_cursor, user)
 
         topten_text = ""
         rank = 1
         top_10_total = 0
 
-        for word, frequency in getTopWordsUser(m_cursor, user):
+        for word, frequency in get_top_words_user(m_cursor, user):
             topten_text += f"**{rank}**. `{word.lower()}` | {frequency} \n"
             rank += 1
             top_10_total += frequency
@@ -110,15 +110,15 @@ class Words(commands.Cog):
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=ctx.guild.icon)
-        word_count = getWordCount(m_cursor, word)
+        word_count = get_word_frequency_server(m_cursor, word)
 
         topten_text = ""
         rank = 1
         top_10_total = 0
 
-        author_word_count = getFrequencyWordOfUser(m_cursor, user, word)
+        author_word_count = get_word_frequency_user(m_cursor, user, word)
 
-        for user, frequency in getWordLeaderboardUser(m_cursor, word):
+        for user, frequency in get_vocab_user(m_cursor, word):
             topten_text += f"`{rank}.` <@{user}> | {abbreviate_number(frequency)} \n"
             rank += 1
             top_10_total += frequency

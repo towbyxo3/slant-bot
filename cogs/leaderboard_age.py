@@ -4,7 +4,7 @@ import os
 from discord.ext import commands
 from utils import default
 import sys
-from helpers.dateformatting import DbYYYformat
+from helpers.dateformatting import format_YMD_to_DMY
 
 sys.path.append("helpers")
 
@@ -45,7 +45,7 @@ class Age(discord.ui.View):
         leaderboard_text = ""
         rank = 1
         for data in sorted_list[:self.num]:
-            date = DbYYYformat(data[1][:10])
+            date = format_YMD_to_DMY(data[1][:10])
             user = f"<@{data[0]}>"
             leaderboard_text += f"`{rank}.` | {user} {date}\n"
             rank += 1
@@ -90,7 +90,7 @@ class Age(discord.ui.View):
         leaderboard_text = ""
         rank = 1
         for data in sorted_list[:self.num]:
-            date = DbYYYformat(data[1][:10])
+            date = format_YMD_to_DMY(data[1][:10])
             user = f"<@{data[0]}>"
             leaderboard_text += f"`{rank}.` | {user} {date}\n"
             rank += 1
@@ -112,7 +112,7 @@ class AgeLeaderboard(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command()
+    @commands.command(alises=["oldest", "ageleaderboard", "agelb"])
     async def age(self, ctx, num=10):
         """
         Oldest Users in Server by Registration Date and Server Join Date

@@ -1,4 +1,7 @@
-def dayCrownsHistory(cursor):
+def get_crowns_history(cursor):
+    """
+    Retrieves most recent crowns.
+    """
     cursor.execute("""
         SELECT *
         FROM(
@@ -17,8 +20,10 @@ def dayCrownsHistory(cursor):
     return rows
 
 
-def dayCrownsHistoryUser(cursor, id):
-    ###
+def get_user_crown_history(cursor, id):
+    """
+    Retrieves most recent crowns by a user
+    """
     cursor.execute("""
         SELECT * FROM(
                 SELECT DISTINCT uc.Date, uc.Id, uc.Msgs
@@ -37,7 +42,7 @@ def dayCrownsHistoryUser(cursor, id):
     return rows
 
 
-def dayCrowns(cursor):
+def top_10_crowns(cursor):
     ###
     cursor.execute("""
         SELECT sub.Id, COUNT(*) AS Frequency
@@ -60,7 +65,7 @@ def dayCrowns(cursor):
     return rows
 
 
-def dayCrownsRank(cursor, id):
+def get_user_crown_rank(cursor, id):
     cursor.execute("""
         SELECT *
         FROM (

@@ -37,16 +37,6 @@ def entry_avatar(cursor, db, date, id, url, original_url):
     db.commit()
 
 
-# def getUserOfAvID(cursor, idAV):
-#     cursor.execute("""
-#         SELECT Id
-#         FROM avhistory
-#         WHERE idAV = ?
-#         """, (idAV,))
-#     user = cursor.fetchone()
-#     return user[0] if user else None
-
-
 def delete_avatar(cursor, db, idAV):
     """
     Deletes the database entry of a certain avatar.
@@ -94,6 +84,8 @@ def delete_all_avatar(cursor, db, id, current_av):
 def avh_create_table(cursor, db):
     """
     Creates the avatar history table if it doesn't exist yet
+
+    db: database
     """
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS "avhistory"
@@ -219,7 +211,7 @@ class AvatarHistoryView(discord.ui.View):
             embed.set_footer(
                 # icon_url=member.avatar,
                 text=(
-                    f"Avatar ID: {item['idAV']} • {DbYYYformat(item['date'][:10])}"
+                    f"Avatar ID: {item['idAV']} • {format_YMD_to_DMY(item['date'][:10])}"
                 )
             )
         return embed
@@ -503,7 +495,6 @@ class AvHistory(commands.Cog):
         Script that collects avatars of members in the guild.
         Buggy due to limited api requests
         """
-        print("test")
 
         avh_DB = sqlite3.connect('avhistory.db')
         avh_cursor = avh_DB.cursor()

@@ -1,39 +1,31 @@
 import sqlite3
 
 
-
-def dailyServerMessages(cursor, date):
+def get_daily_server_msgs(cursor, date):
     # returns weekly messages in a particular year and week
     cursor.execute("""
         SELECT SUM(Msgs),
                SUM(Chars)
         FROM serverchat
         WHERE Date = ?
-        """,(date,))
+        """, (date,))
     rows = cursor.fetchall()
-    return rows [0]
+    return rows[0]
 
 
-
-def weeklyServerMessages(cursor, year, week):
+def get_weekly_server_msgs(cursor, year, week):
     # returns weekly messages in a particular year and week
     cursor.execute("""
         SELECT SUM(Msgs),
                SUM(Chars)
         FROM serverchat
         WHERE strftime('%Y', Date) = ? AND strftime('%W', Date) = ?
-        """,(year,week))
+        """, (year, week))
     rows = cursor.fetchall()
-    return rows [0]
+    return rows[0]
 
 
-
-### monthly
-
-
-
-
-def monthlyServerMessages(cursor, year, month):
+def get_monthly_server_msgs(cursor, year, month):
     # returns monthly messages in a particular year
     cursor.execute("""
         SELECT SUM(Msgs),
@@ -44,12 +36,8 @@ def monthlyServerMessages(cursor, year, month):
     rows = cursor.fetchall()
     return rows[0]
 
-### yearly
 
-
-
-
-def yearlyServerMessages(cursor, year):
+def get_yearly_server_msgs(cursor, year):
     # returns yearly messages in a particular year
     cursor.execute("""
         SELECT SUM(Msgs),
@@ -61,13 +49,7 @@ def yearlyServerMessages(cursor, year):
     return rows[0]
 
 
-### ALL TIME
-
-
-
-
-
-def ServerMessages(cursor):
+def get_alltime_server_msgs(cursor):
     # returns alltime messages
     cursor.execute("""
         SELECT SUM(Msgs),
@@ -78,18 +60,16 @@ def ServerMessages(cursor):
     return rows[0]
 
 
-## how many days, weeks, months, years
-
-
-def dayEntries(cursor):
+def get_day_chat_entries_count(cursor):
     cursor.execute("""
         SELECT COUNT(Date)
-        FROM serverchat 
+        FROM serverchat
         """)
     rows = cursor.fetchall()
     return rows[0][0]
 
-def weekEntries(cursor):
+
+def get_week_chat_entries_count(cursor):
     cursor.execute("""
         SELECT COUNT(*) AS row_count
         FROM (
@@ -102,7 +82,7 @@ def weekEntries(cursor):
     return rows[0][0]
 
 
-def monthEntries(cursor):
+def get_month_chat_entries_count(cursor):
     cursor.execute("""
         SELECT COUNT(*) AS row_count
         FROM (
@@ -115,7 +95,7 @@ def monthEntries(cursor):
     return rows[0][0]
 
 
-def yearEntries(cursor):
+def get_year_chat_entries_count(cursor):
     cursor.execute("""
         SELECT COUNT(*) AS row_count
         FROM (
@@ -128,17 +108,17 @@ def yearEntries(cursor):
     return rows[0][0]
 
 
-def dailyMessagesYearCounter(cursor, year):
+def get_chat_active_days_count_in_year(cursor, year):
     cursor.execute("""
         SELECT COUNT(date)
         FROM serverchat
         WHERE strftime('%Y', Date) = ?
-        """,(year,))
+        """, (year,))
     rows = cursor.fetchall()
     return rows[0][0]
 
 
-def yearlyMessagesPeakMonth(cursor, year):
+def get_server_month_peak_in_year(cursor, year):
     # returns the monthly messages peak in a year by a user
     cursor.execute("""
         SELECT strftime('%Y-%m', Date) as Month, SUM(Msgs) as total_msgs
@@ -151,7 +131,8 @@ def yearlyMessagesPeakMonth(cursor, year):
     data = cursor.fetchall()
     return data[0]
 
-def yearlyMessagesPeak(cursor, year):
+
+def get_server_day_peak_in_year(cursor, year):
     # returns the peak of a year by a user
     cursor.execute("""
         SELECT Date, Msgs
@@ -163,7 +144,7 @@ def yearlyMessagesPeak(cursor, year):
     return data[0]
 
 
-def YearServerMessagesRank(cursor, year):
+def get_server_year_peak_rank(cursor, year):
     cursor.execute("""
         SELECT rank
         FROM (SELECT

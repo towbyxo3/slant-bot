@@ -35,7 +35,7 @@ class VoiceCommands(commands.Cog):
             await ctx.send("You don't have the permission to use this command!"
                            )
 
-    @commands.command(aliases=['mma'])
+    @commands.command(aliases=['mma', 'massmoveall'])
     async def mmall(self, ctx, *, channel: discord.VoiceChannel):
         """
         Moves every member of the server who is in a voice channel to a certain voice channel.: mmall [channel name]

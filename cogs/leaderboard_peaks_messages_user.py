@@ -13,7 +13,7 @@ sys.path.append("helpers")
 from queries.userchatqueries import *
 from queries.serverchatqueries import *
 from helpers.dateformatting import *
-from queries.peakqueries import *
+from queries.userpeakqueries import *
 from helpers.numberformatting import *
 
 
@@ -23,15 +23,14 @@ class Userpeak(discord.ui.View):
         self.ctx = ctx
         self.member = member
 
-
-    @discord.ui.button(label="Day", style=discord.ButtonStyle.blurple)
-    async def Day(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Days", style=discord.ButtonStyle.blurple)
+    async def days(self, interaction: discord.Interaction, button: discord.ui.Button):
         user = self.member.id
 
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        user_rank, user_date, id, user_msgs = TopChatUserPeaksRank(c_cursor, user)
+        user_rank, user_date, id, user_msgs = get_user_day_peak_rank(c_cursor, user)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=self.ctx.guild.icon)
@@ -45,8 +44,8 @@ class Userpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, id, msgs in TopChatUserPeaks(c_cursor):
-            topten_text += f"`{rank}.`  <@{id}> **{msgs}** Msgs **{DbYYYformat(date)}**\n"
+        for date, id, msgs in get_top_user_msgs_day(c_cursor):
+            topten_text += f"`{rank}.`  <@{id}> **{msgs}** Msgs **{format_YMD_to_DMY(date)}**\n"
             rank+=1
 
         embed.add_field(
@@ -56,21 +55,21 @@ class Userpeak(discord.ui.View):
         embed.set_footer(
             icon_url=self.member.avatar,
             text=f"""
-                {user_rank}. {self.member.name}#{self.member.discriminator} | {user_msgs} Msgs | {DbYYYformat(user_date)} 
+                {user_rank}. {self.member.name}#{self.member.discriminator} | {user_msgs} Msgs | {format_YMD_to_DMY(user_date)}
                     """) 
 
         await interaction.message.edit(embed=embed)
         await interaction.response.defer()
 
 
-    @discord.ui.button(label="Weekly", style=discord.ButtonStyle.blurple)
-    async def Weekly(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Weeks", style=discord.ButtonStyle.blurple)
+    async def weeks(self, interaction: discord.Interaction, button: discord.ui.Button):
         user = self.member.id
 
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        user_rank, user_date, id, user_msgs = TopChatUserPeaksWeekRank(c_cursor, user)
+        user_rank, user_date, id, user_msgs = get_user_week_peak_rank(c_cursor, user)
         user_year, user_weak= user_date[:4], user_date[5:]
 
         embed = discord.Embed(color=discord.Color.blue())
@@ -85,7 +84,7 @@ class Userpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, id, msgs in TopChatUserPeaksWeek(c_cursor):
+        for date, id, msgs in get_top_user_msgs_week(c_cursor):
             year, week = date[:4], date[5:]
             topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs **W{week} {year}**\n"
             rank+=1
@@ -104,14 +103,14 @@ class Userpeak(discord.ui.View):
         await interaction.response.defer()
 
 
-    @discord.ui.button(label="Monthly", style=discord.ButtonStyle.blurple)
-    async def Monthly(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="months", style=discord.ButtonStyle.blurple)
+    async def months(self, interaction: discord.Interaction, button: discord.ui.Button):
         user = self.member.id
 
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        user_rank, user_date, id, user_msgs = TopChatUserPeaksMonthRank(c_cursor, user)
+        user_rank, user_date, id, user_msgs = get_user_month_peak_rank(c_cursor, user)
         user_year, user_month= user_date[:4], get_month_name(user_date[5:])[:3]
 
         embed = discord.Embed(color=discord.Color.blue())
@@ -126,7 +125,7 @@ class Userpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, id, msgs in TopChatUserPeaksMonth(c_cursor):
+        for date, id, msgs in get_top_user_msgs_month(c_cursor):
             year, month = date[:4], get_month_name(date[5:])[:3]
             topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs **{month} {year}**\n"
             rank+=1
@@ -145,14 +144,14 @@ class Userpeak(discord.ui.View):
         await interaction.response.defer()
 
 
-    @discord.ui.button(label="Yearly", style=discord.ButtonStyle.blurple)
-    async def Yearly(self, interaction: discord.Interaction, button: discord.ui.Button):
+    @discord.ui.button(label="Years", style=discord.ButtonStyle.blurple)
+    async def years(self, interaction: discord.Interaction, button: discord.ui.Button):
         user = self.member.id
 
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        user_rank, user_date, id, user_msgs = TopChatUserPeaksYearRank(c_cursor, user)
+        user_rank, user_date, id, user_msgs = get_user_year_peak_rank(c_cursor, user)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=self.ctx.guild.icon)
@@ -166,7 +165,7 @@ class Userpeak(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for date, id, msgs in TopChatUserPeaksYear(c_cursor):
+        for date, id, msgs in get_top_user_msgs_year(c_cursor):
             topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs **{date}**\n"
             rank+=1
 

@@ -44,7 +44,8 @@ class Tiktok(commands.Cog):
         except:
             return
         file = discord.File(filename)
-        await message.channel.send(file=file, reference=message)
+        # remove comment
+        # await message.channel.send(file=file, reference=message)
         os.remove(filename)
 
 

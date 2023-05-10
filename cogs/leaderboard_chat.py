@@ -26,7 +26,7 @@ def get_last_week(year, week):
 
 prev_year, prev_week = get_last_week(year, week)
 
-prev_user_rank = TopWeeklyRank(c_cursor, str(prev_year), (prev_week), id)[0]
+prev_user_rank = get_user_rank_top_chatters_week(c_cursor, str(prev_year), (prev_week), id)[0]
 
 rank_diff = prev_user_rank-rank
 change_symbol = '🟩' if rank_diff > 0 else '🟥' if rank_diff < 0 else '⬛'
@@ -41,7 +41,7 @@ class ChatLeaderboardView(discord.ui.View):
         self.member = member
 
     @discord.ui.button(label="Weekly", style=discord.ButtonStyle.blurple)
-    async def Weekly(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def weekly(self, interaction: discord.Interaction, button: discord.ui.Button):
         user = self.member.id
         ctx = self.ctx
 
@@ -51,9 +51,9 @@ class ChatLeaderboardView(discord.ui.View):
         year, month, week = get_todays_date()
         first_day, last_day = get_week_dates(year, week)
 
-        unique_chatters_week = distinctChattersWeek(c_cursor, year, week)
-        user_rank, id, user_msgs = TopWeeklyRank(c_cursor, year, week, user)
-        weekly_server_messages, weekly_server_chars = weeklyServerMessages(c_cursor, year, week)
+        unique_chatters_week = get_distinct_chatters_count_week(c_cursor, year, week)
+        user_rank, id, user_msgs = get_user_rank_top_chatters_week(c_cursor, year, week, user)
+        weekly_server_messages, weekly_server_chars = get_weekly_server_msgs(c_cursor, year, week)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=ctx.guild.icon)
@@ -67,7 +67,7 @@ class ChatLeaderboardView(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for id, msgs in TopWeekly(c_cursor, year, week):
+        for id, msgs in top_chatters_week(c_cursor, year, week):
             topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/weekly_server_messages, 1)}%\n"
 
             rank += 1
@@ -108,9 +108,9 @@ class ChatLeaderboardView(discord.ui.View):
         year, month, week = get_todays_date_actually()
         month_name = get_month_name(month)
 
-        unique_chatters_month = distinctChattersMonth(c_cursor, year, month)
-        user_rank, id, user_msgs = TopMonthlyRank(c_cursor, year, month, user)
-        monthly_server_msgs, monthly_server_chars = monthlyServerMessages(c_cursor, year, month)
+        unique_chatters_month = get_distinct_chatters_count_month(c_cursor, year, month)
+        user_rank, id, user_msgs = get_user_rank_top_chatters_month(c_cursor, year, month, user)
+        monthly_server_msgs, monthly_server_chars = get_monthly_server_msgs(c_cursor, year, month)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=ctx.guild.icon)
@@ -122,7 +122,7 @@ class ChatLeaderboardView(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for id, msgs in TopMonthly(c_cursor, year, month):
+        for id, msgs in top_chatters_month(c_cursor, year, month):
             top_10_total_msgs += msgs
             topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/monthly_server_msgs, 1)}%\n"
             rank += 1
@@ -157,9 +157,9 @@ class ChatLeaderboardView(discord.ui.View):
 
         year, month, week = get_todays_date_actually()
 
-        unique_chatters_year = distinctChattersYear(c_cursor, year)
-        user_rank, id, user_msgs = TopYearlyRank(c_cursor, year, user)
-        yearly_server_msgs, yearly_server_chars = yearlyServerMessages(c_cursor, year)
+        unique_chatters_year = get_distinct_chatters_count_year(c_cursor, year)
+        user_rank, id, user_msgs = get_user_rank_top_chatters_year(c_cursor, year, user)
+        yearly_server_msgs, yearly_server_chars = get_yearly_server_msgs(c_cursor, year)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=ctx.guild.icon)
@@ -172,7 +172,7 @@ class ChatLeaderboardView(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for id, msgs in TopYearly(c_cursor, year):
+        for id, msgs in top_chatters_year(c_cursor, year):
             top_10_total_msgs += msgs
             topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/yearly_server_msgs, 1)}%\n"
             rank += 1
@@ -205,9 +205,9 @@ class ChatLeaderboardView(discord.ui.View):
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        unique_chatters = distinctChattersAllTime(c_cursor)
-        user_rank, id, user_msgs = TopAllTimeRank(c_cursor, user)
-        server_msgs, server_chars = ServerMessages(c_cursor)
+        unique_chatters = get_distinct_chatters_count_alltime(c_cursor)
+        user_rank, id, user_msgs = get_user_rank_top_chatters_alltime(c_cursor, user)
+        server_msgs, server_chars = get_alltime_server_msgs(c_cursor)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=ctx.guild.icon)
@@ -219,7 +219,7 @@ class ChatLeaderboardView(discord.ui.View):
         topten_text = ""
         rank = 1
 
-        for id, msgs in TopAllTime(c_cursor):
+        for id, msgs in top_chatters_alltime(c_cursor):
             top_10_total_msgs += msgs
             topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
             rank += 1

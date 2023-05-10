@@ -6,71 +6,18 @@ from discord.ext.commands.context import Context
 from discord.ext.commands._types import BotT
 from discord.ext import commands
 import sys
-import requests
 import sqlite3
-from queries.userchatqueries import TopAllTimeRank
+from queries.userchatqueries import get_user_rank_top_chatters_alltime
 from helpers.numberformatting import abbreviate_number
 
 sys.path.append("queries")
 sys.path.append("helpers")
 
 
-def remove_hashtag(username):
-    """
-    Removes the discriminatorof in a users name
-    """
-
-    name_cut = username.partition('#')
-    name = name_cut[0]
-
-    return name
-
-
-def get_level(user):
-    """
-    Fetches level, rank, xp, message count data from mee6s leaderboard
-    """
-
-    try:
-        URL = 'https://mee6.xyz/api/plugins/levels/leaderboard/739175633673781259'
-        res = requests.get(URL)
-
-        for count, item in enumerate(res.json()['players']):
-            name = item['username']
-            discriminator = item['discriminator']
-            level = item['level']
-            msg_count = item['message_count']
-            xp = item['xp']
-            if name == user:
-                rank = count + 1
-
-                return level, rank, xp, msg_count
-    except:
-        return None
-
-
 class Discord_Info(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
-
-    @commands.command(aliases=["avxxx", "pfpxxx", "profilexxx"])
-    @commands.guild_only()
-    async def avatarold(self, ctx: Context[BotT], *, member: discord.Member = None):
-        """
-        Returns Avatar of user: avatar *@user
-        """
-
-        if member == None:
-            member = ctx.author
-
-        embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at)
-        embed.set_author(icon_url=member.avatar,
-                         name=f"{member}   •   {member.id}"),
-        embed.set_image(url=member.avatar)
-        embed.set_footer(icon_url=ctx.author.avatar, text="Server ID: " + str(ctx.guild.id))
-
-        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
@@ -125,11 +72,11 @@ class Discord_Info(commands.Cog):
 
         guild = ctx.guild
 
-        embed = discord.Embed(description="Community for autistic, depressed people",
+        embed = discord.Embed(description="Best server on Discord!",
                               timestamp=ctx.message.created_at,
                               color=discord.Color.blue())
-        embed.set_author(name="B40 Community", icon_url="https://i.ibb.co/yqfYjPK/image.png")
-        embed.set_thumbnail(url="https://i.imgur.com/7dyGz0S.jpg")
+        embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.banner)
+        embed.set_thumbnail(url=ctx.guild.icon)
         embed.add_field(name="Owner", value=guild.owner)
         embed.add_field(name="Members", value=guild.member_count)
         embed.add_field(name="Roles", value=len(guild.roles))
@@ -201,20 +148,11 @@ class Discord_Info(commands.Cog):
         embed.set_author(icon_url=member.avatar, name=f"{member.display_name}")
         embed.set_thumbnail(url=member.display_avatar)
         embed.add_field(name="@", value=f"<@{member.id}>")
-        # try:
-        #     name = remove_hashtag(str(member))
-        #     level, rank, xp, msg_count = get_level(name)
 
-        #     embed.add_field(name='Level', value=level, inline=True)
-        #     embed.add_field(name='Rank', value=f"#{rank}", inline=True)
-        #     # embed.add_field(name='XP',value=xp,inline=True)
-        #     # embed.add_field(name='Msg Count', value=msg_count,inline=True)
-        # except Exception as e:
-        #     print(str(e))
         try:
             c_DB = sqlite3.connect("chat.db")
             c_cursor = c_DB.cursor()
-            user_rank, id, user_msgs = TopAllTimeRank(c_cursor, member.id)
+            user_rank, id, user_msgs = get_user_rank_top_chatters_alltime(c_cursor, member.id)
             embed.add_field(name="Messages", value=f"{abbreviate_number(user_msgs)} (#{user_rank})")
         except:
             pass

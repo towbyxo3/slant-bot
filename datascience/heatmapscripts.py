@@ -12,14 +12,14 @@ from helpers.dateformatting import get_month_name
 sys.path.append("helpers")
 
 
-def cmap_blue():
+def get_cmap_blue():
     """
     Returns cmap colours for daytime and daytime/weekday heatmap
     """
     return mcolors.LinearSegmentedColormap.from_list("custom", ["#303434", "#1f0073"])
 
 
-def cmap_red():
+def get_cmap_red():
     """
     Returns cmap colours for calendar and months/year heatmap
     """
@@ -81,7 +81,7 @@ def create_heatmap_hour_of_day(database, id, year, server=False):
         annot=True, fmt=".0f",
         linewidths=.5,
         linecolor='white',
-        cmap=cmap_blue(),
+        cmap=get_cmap_blue(),
         annot_kws={"fontsize": 9},
         cbar=False
     )
@@ -168,7 +168,7 @@ def create_heatmap_hour_of_weekday(database, id, year, server=False):
         fmt=".0f",
         linewidths=.5,
         linecolor='grey',
-        cmap=cmap_blue(),
+        cmap=get_cmap_blue(),
         annot_kws={"fontsize": 9},
         cbar=False
     )
@@ -275,7 +275,7 @@ def create_heatmap_calendar(database, id, year, server=False):
         fmt=".0f",
         linewidths=.5,
         linecolor='lightgrey',
-        cmap=cmap_red(),
+        cmap=get_cmap_red(),
         annot_kws={"fontsize": 9, "fontweight": 'bold'},
         cbar=False,
         xticklabels=[get_month_name(i + 1)[:3] for i in range(12)]
@@ -361,7 +361,7 @@ def create_heatmap_years_months(database, id, year, server=False):
         annot=True,
         fmt=".0f",
         linewidths=.5,
-        cmap=cmap_red(),
+        cmap=get_cmap_red(),
         annot_kws={"fontsize": 11, "fontweight": 'bold'},
         xticklabels=[get_month_name(i + 1)[:3] for i in range(12)],
         linecolor='grey',

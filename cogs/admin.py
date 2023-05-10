@@ -26,11 +26,11 @@ class Admin(commands.Cog):
             json.dump(data, jsonFile, indent=2)
 
     @commands.command()
-    async def amiadmin(self, ctx: Context[BotT]):
+    async def owner(self, ctx: Context[BotT]):
         """ Are you an admin? """
         if ctx.author.id in self.config["owners"]:
-            return await ctx.send(f"Yes")
-        await ctx.send(f"You wish")
+            return await ctx.send(f"You're the owner")
+        await ctx.send(f"No, <@{self.config['owners'][0]}> owns the bot")
 
     @commands.command()
     @commands.check(permissions.is_owner)

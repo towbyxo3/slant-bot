@@ -11,7 +11,7 @@ sys.path.append("helpers")
 from queries.userchatqueries import *
 from queries.serverchatqueries import *
 from helpers.dateformatting import *
-from queries.peakqueries import *
+from queries.userpeakqueries import *
 from queries.crownqueries import *
 
 
@@ -22,7 +22,7 @@ class Crowns(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command()
+    @commands.command(alises=["crown", "crownlb", "crownleaderboard"])
     async def crowns(self, ctx, member: discord.Member = None):
         if member is None:
             member = ctx.author
@@ -31,13 +31,13 @@ class Crowns(commands.Cog):
         c_DB = sqlite3.connect("chat.db")
         c_cursor = c_DB.cursor()
 
-        possible_crowns = dayEntries(c_cursor)
-        user_id, user_crowns, user_rank = dayCrownsRank(c_cursor, user)
+        possible_crowns = get_day_chat_entries_count(c_cursor)
+        user_id, user_crowns, user_rank = get_user_crown_rank(c_cursor, user)
 
         embed = discord.Embed(color=discord.Color.blue())
         embed.set_thumbnail(url=ctx.guild.icon)
         embed.set_author(
-            name=f"""
+            name="""
                 Crown 👑 Leaderboard\n👑: Most Msgs in a Day
                 """,
             icon_url=ctx.guild.icon)
@@ -46,7 +46,7 @@ class Crowns(commands.Cog):
         rank = 1
         leaderboard_total_crowns = 0
 
-        for id, crowns in dayCrowns(c_cursor):
+        for id, crowns in top_10_crowns(c_cursor):
 
             topten_text += f"`{rank}.`  <@{id}> **{crowns}** 👑\n"
             rank += 1

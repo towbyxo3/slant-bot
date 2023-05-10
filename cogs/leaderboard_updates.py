@@ -250,8 +250,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
             )
 
             # unique chatters count text
-            unique_chatters_month = distinctChattersMonth(c_cursor, year, month)
-            monthly_server_msgs, monthly_server_chars = monthlyServerMessages(c_cursor, year, month)
+            unique_chatters_month = get_distinct_chatters_count_month(c_cursor, year, month)
+            monthly_server_msgs, monthly_server_chars = get_monthly_server_msgs(c_cursor, year, month)
             font_server_stats = ImageFont.truetype(FONT_PATH_TITLE, 95)
             draw.text(
                 (50, 270),
@@ -485,8 +485,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         )
 
         # unique chatters count text
-        unique_chatters_all_time = distinctChattersAllTime(c_cursor)
-        all_time_server_msgs, all_time_server_chars = ServerMessages(c_cursor)
+        unique_chatters_all_time = get_distinct_chatters_count_alltime(c_cursor)
+        all_time_server_msgs, all_time_server_chars = get_alltime_server_msgs(c_cursor)
         font_server_stats = ImageFont.truetype(FONT_PATH_TITLE, 95)
         draw.text(
             (50, 270),
@@ -711,8 +711,8 @@ class MonthlyLeaderboardUpdate(commands.Cog):
                     )
 
                     # unique chatters count text
-                    unique_chatters_month = distinctChattersMonth(c_cursor, year, month)
-                    monthly_server_msgs, monthly_server_chars = monthlyServerMessages(c_cursor, year, month)
+                    unique_chatters_month = get_distinct_chatters_count_month(c_cursor, year, month)
+                    monthly_server_msgs, monthly_server_chars = get_monthly_server_msgs(c_cursor, year, month)
                     font_server_stats = ImageFont.truetype(FONT_PATH_TITLE, 95)
 
                     draw.text(

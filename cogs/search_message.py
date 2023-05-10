@@ -5,7 +5,7 @@ from utils import default
 from typing import Optional
 import sys
 from helpers.numberformatting import *
-from helpers.dateformatting import DbYYYformat
+from helpers.dateformatting import format_YMD_to_DMY
 import requests
 
 sys.path.append("helpers")
@@ -102,7 +102,7 @@ class Quote(commands.Cog):
         )
         embed.set_author(
             icon_url=member.avatar,
-            name=f"{member.name}#{member.discriminator} | {DbYYYformat(date[:10])}"
+            name=f"{member.name}#{member.discriminator} | {format_YMD_to_DMY(date[:10])}"
         )
         await ctx.send(embed=embed)
 

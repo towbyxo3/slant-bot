@@ -1,54 +1,4 @@
-import sqlite3
-
-
-def TopDailyRank(cursor, date, id):
-    # returns user rank in the daily chat leaderboard
-    cursor.execute("""
-        SELECT *
-        FROM (SELECT
-                RANK() OVER (ORDER BY Sum(Msgs) DESC) AS rank,
-                Id,
-                SUM(Msgs) AS Msgs
-              FROM userchat
-              WHERE Date = ?
-              GROUP BY Id
-              ORDER BY SUM(Msgs) DESC)
-        WHERE Id = ?
-        """, (date, id))
-    rows = cursor.fetchall()
-    if len(rows) == 0:
-        print("empty")
-        return "-", id, 0
-    return rows[0]
-
-
-def TopDaily(cursor, date):
-    cursor.execute("""
-        SELECT Id, Msgs
-        FROM userchat
-        WHERE Date = ?
-        ORDER BY msgs DESC
-        LIMIT 3
-        """,(date,))
-    rows = cursor.fetchall()
-    return rows
-
-
-
-def TopWeekly(cursor, year, week):
-    # returns top weekly chatters of a particular week in a year
-    cursor.execute("""
-        SELECT Id, SUM(Msgs) AS Msgs
-        FROM userchat
-        WHERE strftime('%W', Date) = ? AND strftime('%Y', Date) = ?
-        GROUP BY Id
-        ORDER BY Msgs DESC
-        Limit 10
-        """, (week, year))
-    rows = cursor.fetchall()
-    return rows
-
-def TopWeekly(cursor, year, week):
+def top_chatters_week(cursor, year, week):
     # returns top weekly chatters of a particular week in a year
     cursor.execute("""
         SELECT Id, SUM(Msgs) AS Msgs
@@ -62,7 +12,7 @@ def TopWeekly(cursor, year, week):
     return rows
 
 
-def TopWeeklyRank(cursor, year, week, id):
+def get_user_rank_top_chatters_week(cursor, year, week, id):
     # returns user rank in the weekly chat leaderboard
     cursor.execute("""
         SELECT *
@@ -82,7 +32,7 @@ def TopWeeklyRank(cursor, year, week, id):
     return rows[0]
 
 
-def distinctChattersDay(cursor, date):
+def get_distinct_chatters_count_day(cursor, date):
     # returns how many unique chatters in week
     cursor.execute("""
         SELECT COUNT(DISTINCT Id)
@@ -93,7 +43,7 @@ def distinctChattersDay(cursor, date):
     return rows[0][0]
 
 
-def distinctChattersWeek(cursor, year, week):
+def get_distinct_chatters_count_week(cursor, year, week):
     # returns how many unique chatters in week
     cursor.execute("""
         SELECT COUNT(DISTINCT Id)
@@ -105,7 +55,7 @@ def distinctChattersWeek(cursor, year, week):
 
 
 
-def TopMonthly(cursor, year, month):
+def top_chatters_month(cursor, year, month):
     # returns top monthly chatters of a particular month in a year
     cursor.execute("""
         SELECT Id, SUM(Msgs) AS Msgs
@@ -119,7 +69,7 @@ def TopMonthly(cursor, year, month):
     return rows
 
 
-def TopMonthlyRank(cursor, year, month, id):
+def get_user_rank_top_chatters_month(cursor, year, month, id):
     # returns user rank in the monthly chat leaderboard
     cursor.execute("""
         SELECT *
@@ -140,7 +90,7 @@ def TopMonthlyRank(cursor, year, month, id):
 
 
 
-def distinctChattersMonth(cursor, year, month):
+def get_distinct_chatters_count_month(cursor, year, month):
     # returns how many unique chatters all month
     cursor.execute("""
         SELECT COUNT(DISTINCT Id)
@@ -151,7 +101,7 @@ def distinctChattersMonth(cursor, year, month):
     return rows[0][0]
 
 
-def TopYearly(cursor, year):
+def top_chatters_year(cursor, year):
     # returns top yearly chatters of a particular year
     cursor.execute("""
         SELECT Id, SUM(Msgs) AS Msgs
@@ -165,7 +115,7 @@ def TopYearly(cursor, year):
     return rows
 
 
-def TopYearlyRank(cursor, year, id):
+def get_user_rank_top_chatters_year(cursor, year, id):
     # returns user rank in the yearly chat leaderboard
     cursor.execute("""
         SELECT *
@@ -184,7 +134,7 @@ def TopYearlyRank(cursor, year, id):
     return rows[0]
 
 
-def distinctChattersYear(cursor, year):
+def get_distinct_chatters_count_year(cursor, year):
     # returns how many unique chatters in year
     cursor.execute("""
         SELECT COUNT(DISTINCT Id)
@@ -195,7 +145,7 @@ def distinctChattersYear(cursor, year):
     return rows[0][0]
 
 
-def TopAllTime(cursor):
+def top_chatters_alltime(cursor):
     # returns top yearly chatters of a particular year
     cursor.execute("""
         SELECT ID, SUM(Msgs) AS Msgs
@@ -208,7 +158,7 @@ def TopAllTime(cursor):
     return rows
 
 
-def TopAllTimeRank(cursor, id):
+def get_user_rank_top_chatters_alltime(cursor, id):
     # returns user rank in the yearly chat leaderboard
     cursor.execute("""
         SELECT *
@@ -225,8 +175,7 @@ def TopAllTimeRank(cursor, id):
     return rows[0]
 
 
-
-def distinctChattersAllTime(cursor):
+def get_distinct_chatters_count_alltime(cursor):
     # returns how many unique chatters all time
     cursor.execute("""
         SELECT COUNT(DISTINCT Id)
@@ -235,7 +184,8 @@ def distinctChattersAllTime(cursor):
     rows = cursor.fetchall()
     return rows[0][0]
 
-def yearlyUserMessages(cursor, id, year):
+
+def get_user_msgs_count_year(cursor, id, year):
     # returns how many messages a user sent in a year
     cursor.execute("""
         SELECT SUM(Msgs)
@@ -246,8 +196,7 @@ def yearlyUserMessages(cursor, id, year):
     return data[0][0]
 
 
-
-def yearlyDaysWhereUserSentMessage(cursor, id, year):
+def get_user_active_days_count_in_year(cursor, id, year):
     # returns how many messages a user sent in a year
     cursor.execute("""
         SELECT COUNT(Msgs)
@@ -257,19 +206,20 @@ def yearlyDaysWhereUserSentMessage(cursor, id, year):
     data = cursor.fetchall()
     return data[0][0]
 
-def yearlyMessagesUserPeak(cursor, id, year):
+def get_user_daily_msg_peaks_in_year(cursor, id, year):
     # returns the peak of a year by a user
     cursor.execute("""
         SELECT Date, Msgs
         FROM userchat
         WHERE Id = ? AND STRFTIME('%Y', Date) = ?
         ORDER BY Msgs DESC
+        LIMIT 1
         """, (id, year))
     data = cursor.fetchall()
     return data[0]
 
 
-def yearlyMessagesUserPeakMonth(cursor, id, year):
+def get_user_monthly_msg_peaks_in_year(cursor, id, year):
     # returns the monthly messages peak in a year by a user
     cursor.execute("""
         SELECT strftime('%Y-%m', Date) as Month, SUM(Msgs) as total_msgs
@@ -283,7 +233,7 @@ def yearlyMessagesUserPeakMonth(cursor, id, year):
     return data[0]
 
 
-def userYearMessagesRank(cursor, id, year):
+def get_user_rank_top_chatters_year_rewind(cursor, id, year):
     cursor.execute("""
         SELECT rank
         FROM (SELECT
