@@ -41,11 +41,12 @@ class Tiktok(commands.Cog):
 
         try:
             filename = download_tiktok_video(url)
-        except:
+        except Exception as e:
+            print(e)
             return
         file = discord.File(filename)
-        # remove comment
-        # await message.channel.send(file=file, reference=message)
+
+        await message.channel.send(file=file, reference=message)
         os.remove(filename)
 
 
