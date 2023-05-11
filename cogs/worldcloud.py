@@ -15,7 +15,6 @@ sys.path.append("queries")
 
 
 def get_vocab_user(cursor, word):
-    print(word)
     cursor.execute("""
             SELECT id, COUNT(id)
             FROM words
@@ -65,8 +64,7 @@ def get_most_frequent_words(m_cursor, length):
         """, (length,))
     data = m_cursor.fetchall()
     # filters channels, mentions, emotes
-    filtered_data = [(word, count) for word, count in data if not (word.startswith(
-        '@') or word.startswith(':') or word.startswith('<') or word.startswith('#'))]
+    filtered_data = [(word, count) for word, count in data if not (word.startswith('@') or word.startswith(':') or word.startswith('<') or word.startswith('#') or "'" in word)]
 
     return filtered_data
 
@@ -103,7 +101,7 @@ def get_most_frequent_words_user(m_cursor, id):
         LIMIT 150
         """, (id,))
     data = m_cursor.fetchall()
-    filtered_data = [(word, count) for word, count in data if not (word.startswith('@') or word.startswith(':') or word.startswith('<') or word.startswith('#'))]
+    filtered_data = [(word, count) for word, count in data if not (word.startswith('@') or word.startswith(':') or word.startswith('<') or word.startswith('#') or "'" in word)]
 
     return filtered_data
 
@@ -171,44 +169,12 @@ def get_unique_words_count_user(m_cursor, id):
     return count
 
 
-def create_word_cloud_server(words):
+def create_wordcloud(words, filename):
     """
     Creates and stores wordcloud for the server
 
     words: dictionary containing words as key and frequency as values
-    """
-
-    # server icon based mask
-    mask = np.array(Image.open("wordcloud/B40.jpg"))
-
-    # create the wordcloud object
-    wordcloud = WordCloud(
-        mask=mask,
-        random_state=1,
-        mode="RGBA",
-        margin=15,
-        width=1600,
-        height=800,
-        max_words=100,
-        stopwords=STOPWORDS
-    )
-
-    # generate the wordcloud
-    wordcloud.generate_from_frequencies(words)
-
-    # graphic and file config
-    plt.figure(figsize=(20, 10), facecolor='k')
-    plt.imshow(wordcloud)
-    plt.axis("off")
-    plt.savefig('wordcloud/wordcloud.png', facecolor='k', bbox_inches='tight')
-    plt.close('all')
-
-
-def create_wordcloud_user(words):
-    """
-    Creates and stores wordcloud for the server
-
-    words: dictionary containing words as key and frequency as values
+    filename: filename
     """
 
     # server icon based mask
@@ -219,8 +185,9 @@ def create_wordcloud_user(words):
         margin=30,
         width=1600,
         height=1000,
+        stopwords=STOPWORDS,
         max_words=70,
-        stopwords=STOPWORDS
+        font_path="./fonts/Montserrat-Bold.ttf"
     )
 
     # generate the wordcloud
@@ -230,7 +197,7 @@ def create_wordcloud_user(words):
     plt.figure(figsize=(16, 10), facecolor='k')
     plt.imshow(wordcloud)
     plt.axis("off")
-    plt.savefig('wordcloud/wordclouduser.png', facecolor='k', bbox_inches='tight')
+    plt.savefig(f"wordcloud/{filename}.png", facecolor='k', bbox_inches='tight')
     plt.close('all')
 
 
@@ -241,7 +208,9 @@ class Wordcloud(commands.Cog):
         self.config = default.load_json()
 
     @commands.command(aliases=["wcs", "wcserver"])
-    async def wordcloudserver(self, ctx, length=3):
+    async def wordcloudserver(self, ctx, length=2):
+        print(length)
+        filename = "worldcloud_server"
         m_DB = sqlite3.connect('messages.db')
         m_cursor = m_DB.cursor()
         samplesize = get_sample_size(m_cursor)
@@ -249,9 +218,9 @@ class Wordcloud(commands.Cog):
 
         word_frequency = get_most_frequent_words(m_cursor, length)
         word_length_samplesize = get_word_count_length(m_cursor, length)
-        create_word_cloud_server(dict(word_frequency))
+        create_wordcloud(dict(word_frequency), filename)
 
-        file = discord.File("wordcloud/wordcloud.png")  # an image in the same folder as the main bot file
+        file = discord.File(f"wordcloud/{filename}.png")  # an image in the same folder as the main bot file
         embed = discord.Embed(timestamp=ctx.message.created_at)
         embed.set_author(icon_url=ctx.guild.icon,
                          name=(
@@ -259,7 +228,7 @@ class Wordcloud(commands.Cog):
                              f"{abbreviate_number(samplesize_unique)} Distinct)"
                          )
                          )
-        embed.set_image(url="attachment://wordcloud.png")
+        embed.set_image(url=f"attachment://{filename}.png")
         embed.set_footer(
             text=(
                 f"{abbreviate_number(word_length_samplesize)} ({round(word_length_samplesize/samplesize*100, 1)}%) "
@@ -270,29 +239,30 @@ class Wordcloud(commands.Cog):
 
     @commands.command(aliases=["wc", "wcuser", "wordclouduser"])
     async def wordcloud(self, ctx, member: discord.Member = None):
+
         m_DB = sqlite3.connect('messages.db')
         m_cursor = m_DB.cursor()
         if member is None:
             member = ctx.author
+        filename = f"word_cloud_{member.id}"
         user = member.id
 
         samplesize = get_sample_size_user(m_cursor, user)
         samplesize_unique = get_unique_words_count_user(m_cursor, user)
 
         word_frequency = get_most_frequent_words_user(m_cursor, user)
-        create_wordcloud_user(dict(word_frequency))
+        create_wordcloud(dict(word_frequency), filename)
 
-        file = discord.File("wordcloud/wordclouduser.png")  # an image in the same folder as the main bot file
+        file = discord.File(f"wordcloud/{filename}.png")  # an image in the same folder as the main bot file
         embed = discord.Embed(timestamp=ctx.message.created_at)
         embed.set_author(icon_url=member.avatar,
                          name=(
                              f"{member.name} ({abbreviate_number(samplesize)} Words, "
                              f"{abbreviate_number(samplesize_unique)} Distinct)")
                          )
-        embed.set_image(url="attachment://wordclouduser.png")
+        embed.set_image(url=f"attachment://{filename}.png")
         # filename and extension have to match (ex. "thisname.jpg" has to be "attachment://thisname.jpg")
         await ctx.send(embed=embed, file=file)
-
 
     @commands.command()
     async def said(self, ctx, word=None):
@@ -338,6 +308,7 @@ class Wordcloud(commands.Cog):
             text=f"{member.display_name} | {abbreviate_number(author_word_count)}", icon_url=member.avatar)
 
         await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(Wordcloud(bot))
