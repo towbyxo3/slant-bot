@@ -104,7 +104,6 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         # fetch channel object where the leaderboard gets posted
         channel = self.bot.get_channel(CHANNEL_ID)
         month, year = get_prev_month()
-        month = "01"
 
         # fetch server object in order to obtain its avatar/icon
         server = await self.bot.fetch_guild(SERVER_ID)
@@ -319,7 +318,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         """
 
         day_of_the_month = 1
-        if get_day_of_month() != 9:
+        if get_day_of_month() != 12:
             return
         CHANNEL_ID = self.channel_all_time_leaderboard_update
         SERVER_ID = self.my_guild
