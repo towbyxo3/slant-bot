@@ -89,10 +89,11 @@ class Entries(commands.Cog):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
+        self.tracked_channels = self.config["tracked_channels"]
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.channel.id == 1085356879410102363:
+        if message.channel.id in self.tracked_channels:
             # CONNECT TO DATA BASES SC = SERVERCHAT, UC = USERCHAT
             c_DB = sqlite3.connect("chat.db")
             c_cursor = c_DB.cursor()

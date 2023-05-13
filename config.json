@@ -16,6 +16,9 @@
   "channel_all_time_leaderboard_update":869547713132396586,
   "channel_avatar_history_images":1057132789935394908,
   "channel_rewind_images":1066582054503993364,
-  "channel_welcome_picture":1085356879410102363
+  "channel_welcome_picture":1085356879410102363,
+  "tracked_channels": [
+    1085356879410102363
+  ]
 
 }

@@ -199,16 +199,10 @@ Moves members in current channel to a certain channel.
 massmoveall [voice channel]
 Moves all members who are in a voice channel to a certain channel.
 
-words.py
-vocab [none]
-Returns the most frequently used words in the server.
-vocabuser [member]
-Returns the most frequently used words by a member.
-said [word]
-Returns members who most frequently used the word.
-
 wordcloud.py
 wordcloud [member, min word length]
 Returns a wordcloud that shows the most frequently used words by a member graphically.
 wordcloudserver [min word length]
 Returns a wordcloud that shows the most frequently used words in the server graphically.
+said [word]
+Returns members who most frequently used the word.
