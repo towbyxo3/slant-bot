@@ -121,7 +121,7 @@ def url_not_in_DB(cursor, url):
 
 def get_avatar_history(cursor, id):
     """
-    Fetches all avatars of a user in the avatar history database
+    Fetches all avatars of a user from the avatar history database
 
     cursor: db.execute()
     id: member id
@@ -138,68 +138,157 @@ def get_avatar_history(cursor, id):
 
 class AvatarView(discord.ui.View):
     """
-    View for Global and Server avatars
+    View to display an embed showing the user's current avatar, and the
+    user can toggle between their global and server avatar.
+    Additionally, there is a "History" button that, when clicked,
+    displays the user's avatar history.
     """
 
-    def __init__(self, ctx, member):
-        super().__init__()
-        self.ctx = ctx
-        self.member = member
+    current_page: int = 1
+    history_button_trigger = False
 
-    @discord.ui.button(label="Global", style=discord.ButtonStyle.gray)
-    async def Global(self, interaction: discord.Interaction, button: discord.ui.Button):
-        member = self.member
-        ctx = self.ctx
+    async def send(self, ctx):
+        """
+        Send the view to a channel. It creates a message
+        containing the view and updates it.
+        """
+        self.message = await ctx.send(view=self)
+        await self.update_message()
 
-        embed = discord.Embed(
-            colour=member.color,
-            timestamp=ctx.message.created_at
-        )
-        embed.set_author(
-            icon_url=member.avatar,
-            name=f"{member}   •   {member.id}"
-        )
-        embed.set_image(url=member.avatar)
-        # embed.set_footer(icon_url=ctx.guild.icon, text="Server ID: " + str(ctx.guild.id))
-
-        await interaction.message.edit(embed=embed)
-        await interaction.response.defer()
-
-    @discord.ui.button(label="Server", style=discord.ButtonStyle.blurple)
-    async def Server(self, interaction: discord.Interaction, button: discord.ui.Button):
-        member = self.member
-        ctx = self.ctx
+    def create_embed(self):
+        """
+        Creates the embed with the respective avatar
+        (global or server depending on current page/previously pressed button).
+        """
+        if self.current_page == 1:
+            av = self.user.display_avatar if self.user.avatar is None else self.user.avatar
+        elif self.current_page == 2:
+            av = self.user.display_avatar
 
         embed = discord.Embed(
-            colour=member.color,
-            timestamp=ctx.message.created_at
+            title="Avatar",
+            color=self.user.color
         )
-        embed.set_author(
-            icon_url=member.display_avatar,
-            name=f"{member}   •   {member.id}"
-        )
-        embed.set_image(url=member.display_avatar)
-        # embed.set_footer(icon_url=ctx.guild.icon, text="Server ID: " + str(ctx.guild.id))
 
-        await interaction.message.edit(embed=embed)
+        embed.set_author(
+            name=f"{self.user.name} # {self.user.discriminator}",
+            icon_url=self.user.display_avatar
+        )
+        embed.set_image(url=av)
+
+        return embed
+
+    async def update_message(self):
+        """
+        Updates the message with the current state of the view.
+        It updates the buttons and the embed.
+        """
+        self.update_buttons()
+        await self.message.edit(embed=self.create_embed(), view=self)
+
+    def update_buttons(self):
+        """
+        Updates the state of the buttons based on the current page
+        page 1 - global avatar
+        page 2 - server avatar
+        """
+        has_server_avatar = (self.user.avatar != self.user.display_avatar) and (self.user.display_avatar is not None)
+        if self.current_page == 1:
+            self.global_avatar.disabled = True
+            self.server_avatar.disabled = not has_server_avatar
+            self.global_avatar.style = discord.ButtonStyle.gray
+            self.server_avatar.style = discord.ButtonStyle.blurple if has_server_avatar else discord.ButtonStyle.gray
+
+        if self.current_page == 2:
+            self.global_avatar.disabled = False
+            self.server_avatar.disabled = True
+            self.global_avatar.style = discord.ButtonStyle.blurple
+            self.server_avatar.style = discord.ButtonStyle.gray
+
+        # history button is disabled after its triggered to avoid spam
+        if self.history_button_trigger is True:
+            self.history.disabled = True
+            self.history.style = discord.ButtonStyle.gray
+
+    @discord.ui.button(label="Global",
+                       style=discord.ButtonStyle.green)
+    async def global_avatar(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
+        self.current_page = 1
+
+        await self.update_message()
+
+    @discord.ui.button(label="Server", style=discord.ButtonStyle.primary)
+    async def server_avatar(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        self.current_page = 2
+        await self.update_message()
+
+    @discord.ui.button(label="History", style=discord.ButtonStyle.primary)
+    async def history(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.defer()
+        self.history_button_trigger = True
+        await self.update_message()
+
+        data = []
+
+        avh_DB = sqlite3.connect("avhistory.db")
+        avh_cursor = avh_DB.cursor()
+
+        # we store the avatar history data in  list of dicts
+        for date, id, url, idAV in get_avatar_history(avh_cursor, self.user.id):
+            data.append(
+                {
+                    "date": date,
+                    "url": url,
+                    "id": id,
+                    "idAV": idAV
+                })
+
+        if len(data) == 0:
+            embed = discord.Embed(
+                description="No Avatars",
+                color=discord.Color.green()
+            )
+            await self.ctx.send(embed=embed)
+            return
+
+        pagination_view = AvatarHistoryView(timeout=120)
+        pagination_view.data = data
+
+        pagination_view.user = self.user
+        pagination_view.author_id = self.ctx.author.id
+        pagination_view.ctx = self.ctx
+        await pagination_view.send(self.ctx)
 
 
 class AvatarHistoryView(discord.ui.View):
     """
-    View for avatar history ofa  member
+    Is view for the avatar history of a member.
+    It includes  buttons for navigating through and
+    displaying avatar history data.
     """
+    # represents the current page of avatar history data being displayed
     current_page: int = 1
+    # an integer representing the number of items (1 avatar per page)
+    # to display per page
     sep: int = 1
 
     async def send(self, ctx):
+        """
+        Send the view to a channel. It creates a message
+        containing the view and updates it.
+        """
         self.message = await ctx.send(view=self)
         await self.update_message(self.data[:self.sep])
 
     def create_embed(self, data):
+        """
+        Creates a Discord embed object with the given avatar history data
+        """
         embed = discord.Embed(
             title=f"{self.current_page} / {int(len(self.data) / self.sep)}",
-            color=discord.Color.blue()
+            color=self.user.color
         )
 
         for item in data:
@@ -217,10 +306,16 @@ class AvatarHistoryView(discord.ui.View):
         return embed
 
     async def update_message(self, data):
+        """
+        Updates the view's message with the given avatar history data and updates the view's buttons
+        """
         self.update_buttons()
         await self.message.edit(embed=self.create_embed(data), view=self)
 
     def update_buttons(self):
+        """
+        Updates the state of the view's navigation buttons based on the current page and data being displayed
+        """
         if self.current_page == 1:
             self.first_page_button.disabled = True
             self.prev_button.disabled = True
@@ -266,42 +361,38 @@ class AvatarHistoryView(discord.ui.View):
             until_item = len(self.data)
         return self.data[from_item:until_item]
 
-    @discord.ui.button(label="|<",
-                       style=discord.ButtonStyle.green)
+    @discord.ui.button(label="|<", style=discord.ButtonStyle.green)
     async def first_page_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user.id == self.author_id:
-            await interaction.response.defer()
-            self.current_page = 1
+        await interaction.response.defer()
+        self.current_page = 1
 
-            await self.update_message(self.get_current_page_data())
+        await self.update_message(self.get_current_page_data())
 
-    @discord.ui.button(label="<",
-                       style=discord.ButtonStyle.primary)
+    @discord.ui.button(label="<", style=discord.ButtonStyle.primary)
     async def prev_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user.id == self.author_id:
-            await interaction.response.defer()
-            self.current_page -= 1
-            await self.update_message(self.get_current_page_data())
+        await interaction.response.defer()
+        self.current_page -= 1
+        await self.update_message(self.get_current_page_data())
 
-    @discord.ui.button(label=">",
-                       style=discord.ButtonStyle.primary)
+    @discord.ui.button(label=">", style=discord.ButtonStyle.primary)
     async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user.id == self.author_id:
-            await interaction.response.defer()
-            self.current_page += 1
-            await self.update_message(self.get_current_page_data())
+        await interaction.response.defer()
+        self.current_page += 1
+        await self.update_message(self.get_current_page_data())
 
-    @discord.ui.button(label=">|",
-                       style=discord.ButtonStyle.green)
+    @discord.ui.button(label=">|", style=discord.ButtonStyle.green)
     async def last_page_button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        if interaction.user.id == self.author_id:
-            await interaction.response.defer()
-            self.current_page = int(len(self.data) / self.sep)
-            await self.update_message(self.get_current_page_data())
+        await interaction.response.defer()
+        self.current_page = int(len(self.data) / self.sep)
+        await self.update_message(self.get_current_page_data())
 
-    @discord.ui.button(label="DEL",
-                       style=discord.ButtonStyle.red)
+    @discord.ui.button(label="DEL", style=discord.ButtonStyle.red)
     async def delete_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """
+        Deletes the first entry on the current page of avatar history data,
+        if the user interacting with the button matches the ID of the member
+        whose avatar is being deleted.
+        """
         first_entry = self.data[self.current_page - 1]
         id_value = first_entry['id']
         idAV = first_entry['idAV']
@@ -378,45 +469,19 @@ class AvHistory(commands.Cog):
             except (discord.NotFound, discord.HTTPException, AttributeError):
                 pass
 
-    @commands.command(aliases=['av', 'pfp', 'avt', 'pf'])
+    @commands.command(aliases=['av', 'pfp', 'avt', 'pf', 'avh', 'avatarhistory', 'icon', 'picture'])
     async def avatar(self, ctx, member: discord.Member = None):
         """
-        Displays a members global (and if given, server avatar in a embed view)
+        Displays a members global (and if given, server avatar in a embed view).
+        Additonally, you get the option to view a members past avatars.
 
         member: @member
         """
+
         if member is None:
             member = ctx.author
 
-        embed = discord.Embed(
-            colour=member.color,
-            timestamp=ctx.message.created_at
-        )
-        embed.set_author(
-            icon_url=member.avatar,
-            name=f"{member}   •   {member.id}"
-        )
-        embed.set_image(url=member.display_avatar if member.avatar is None else member.avatar)
-        # embed.set_footer(icon_url=ctx.guild.icon, text="Server ID: " + str(ctx.guild.id))
-
-        if member.avatar == member.display_avatar or member.avatar is None:
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send(embed=embed, view=AvatarView(ctx, member))
-
-    @commands.command(aliases=['avh', 'avhistory'])
-    async def avatarhistory(self, ctx, member: Union[discord.Member, int, str] = None):
-        """
-        Displays a gallery of a members current and past avatars
-
-        member: @member
-        """
-        if member is None:
-            member = ctx.author
-
-        # before we send the view, we check if the current display_avatar
-        # and avatar are in the database, if not, add them
-
+        # store current avatars of member in database.
         try:
             avh_DB = sqlite3.connect('avhistory.db')
             avh_cursor = avh_DB.cursor()
@@ -442,48 +507,7 @@ class AvHistory(commands.Cog):
         except (discord.NotFound, discord.HTTPException, AttributeError):
             pass
 
-        if isinstance(member, discord.Member):
-            pass
-        elif isinstance(member, int):
-            try:
-                member = await self.bot.fetch_user(member)
-
-            except:
-                embed = discord.Embed(description="Invalid ID", color=discord.Color.red())
-                await ctx.send(embed=embed)
-                return
-        else:
-            embed = discord.Embed(description="Valid Arguments: `ID` `Member`",
-                                  color=discord.Color.red())
-            await ctx.send(embed=embed)
-            return
-
-        data = []
-
-        avh_DB = sqlite3.connect("avhistory.db")
-        avh_cursor = avh_DB.cursor()
-
-        # we store the avatar history data in  list of dicts
-        for date, id, url, idAV in get_avatar_history(avh_cursor, member.id):
-            data.append(
-                {
-                    "date": date,
-                    "url": url,
-                    "id": id,
-                    "idAV": idAV
-                })
-
-        if len(data) == 0:
-            embed = discord.Embed(
-                description="No Avatars",
-                color=discord.Color.green()
-            )
-            await ctx.send(embed=embed)
-            return
-
-        pagination_view = AvatarHistoryView(timeout=120)
-        pagination_view.data = data
-
+        pagination_view = AvatarView(timeout=120)
         pagination_view.user = member
         pagination_view.author_id = ctx.author.id
         pagination_view.ctx = ctx
