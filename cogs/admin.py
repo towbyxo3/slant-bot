@@ -107,9 +107,9 @@ class Admin(commands.Cog):
         """ DM the user of your choice """
         try:
             await user.send(message)
-            await ctx.send(f"✉️ Sent a DM to **{user}**")
+            await ctx.send(f"Sent a DM to **{user}**")
         except discord.Forbidden:
-            await ctx.send("This user might be having DMs blocked or it's a bot account...")
+            await ctx.send("User might be having DMs blocked or it's a bot account...")
 
     @commands.group()
     @commands.check(permissions.is_owner)
