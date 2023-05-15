@@ -61,19 +61,18 @@ class AgeView(discord.ui.View):
             embed.set_thumbnail(url=guild.icon)
 
             leaderboard_text = ""
-            rank = 1
-            for data in sorted_list[:self.num]:
+
+            for rank, data in enumerate(sorted_list[:self.num], 1):
                 date = format_YMD_to_DMY(data[1][:10])
                 user = f"<@{data[0]}>"
                 leaderboard_text += f"`{rank}.` | {user} {date}\n"
-                rank += 1
 
             embed.add_field(
                 name="Rank | Member | Created on",
                 value=leaderboard_text,
                 inline=False
             )
-            embed.set_footer(text=f"{rank-1} out of {true_member_count} Members")
+            embed.set_footer(text=f"{rank} out of {true_member_count} Members")
         elif self.current_page == 2:
             true_member_count = len([m for m in self.ctx.guild.members if not m.bot])
             member_list = {}
@@ -97,19 +96,17 @@ class AgeView(discord.ui.View):
             embed.set_thumbnail(url=guild.icon)
 
             leaderboard_text = ""
-            rank = 1
-            for data in sorted_list[:self.num]:
+            for rank, data in enumerate(sorted_list[:self.num], 1):
                 date = format_YMD_to_DMY(data[1][:10])
                 user = f"<@{data[0]}>"
                 leaderboard_text += f"`{rank}.` | {user} {date}\n"
-                rank += 1
 
             embed.add_field(
                 name="Rank | Member | Joined on",
                 value=leaderboard_text,
                 inline=False
             )
-            embed.set_footer(text=f"{rank-1} out of {true_member_count} Members")
+            embed.set_footer(text=f"{rank} out of {true_member_count} Members")
 
         return embed
 
@@ -131,17 +128,17 @@ class AgeView(discord.ui.View):
             self.registration.disabled = True
             self.join.disabled = False
             self.registration.style = discord.ButtonStyle.gray
-            self.join.style = discord.ButtonStyle.blurple
+            self.join.style = discord.ButtonStyle.green
 
         if self.current_page == 2:
             self.registration.disabled = False
             self.join.disabled = True
-            self.registration.style = discord.ButtonStyle.blurple
+            self.registration.style = discord.ButtonStyle.green
             self.join.style = discord.ButtonStyle.gray
 
         self.reverse.label = "Oldest" if self.sort_by_youngest else "Youngest"
 
-    @discord.ui.button(label="Registration Date", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Registration Date", style=discord.ButtonStyle.green)
     async def registration(self, interaction: discord.Interaction, button: discord.ui.Button):
         """
         Returns the oldest discord users of the server.
@@ -150,7 +147,7 @@ class AgeView(discord.ui.View):
         await self.update_message()
         await interaction.response.defer()
 
-    @discord.ui.button(label="Join Date", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Join Date", style=discord.ButtonStyle.green)
     async def join(self, interaction: discord.Interaction, button: discord.ui.Button):
         """
         Returns the oldest members of the server.
