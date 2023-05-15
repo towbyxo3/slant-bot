@@ -210,8 +210,7 @@ class AvatarView(discord.ui.View):
             self.history.disabled = True
             self.history.style = discord.ButtonStyle.gray
 
-    @discord.ui.button(label="Global",
-                       style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Global", style=discord.ButtonStyle.green)
     async def global_avatar(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.defer()
         self.current_page = 1
@@ -264,10 +263,11 @@ class AvatarView(discord.ui.View):
 
 class AvatarHistoryView(discord.ui.View):
     """
-    Is view for the avatar history of a member.
+    Is a view for the avatar history of a member.
     It includes  buttons for navigating through and
     displaying avatar history data.
     """
+
     # represents the current page of avatar history data being displayed
     current_page: int = 1
     # an integer representing the number of items (1 avatar per page)
@@ -284,7 +284,7 @@ class AvatarHistoryView(discord.ui.View):
 
     def create_embed(self, data):
         """
-        Creates a Discord embed object with the given avatar history data
+        Creates an embed with the given avatar history data
         """
         embed = discord.Embed(
             title=f"{self.current_page} / {int(len(self.data) / self.sep)}",
