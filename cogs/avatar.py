@@ -192,7 +192,7 @@ class AvatarView(discord.ui.View):
         page 1 - global avatar
         page 2 - server avatar
         """
-        has_server_avatar = (self.user.avatar != self.user.display_avatar) and (self.user.display_avatar is not None)
+        has_server_avatar = (self.user.avatar != self.user.display_avatar) and (self.user.avatar is not None)
         if self.current_page == 1:
             self.global_avatar.disabled = True
             self.server_avatar.disabled = not has_server_avatar
