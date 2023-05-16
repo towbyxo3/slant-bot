@@ -49,6 +49,11 @@ class ChatLeaderboardView(discord.ui.View):
 
     current_page: int = 1
 
+    WEEKLY = 1
+    MONTHLY = 2
+    YEARLY = 3
+    ALLTIME = 4
+
     async def send(self, ctx):
         """
         Send the view to a channel. It creates a message
@@ -78,170 +83,99 @@ class ChatLeaderboardView(discord.ui.View):
         c_cursor = c_DB.cursor()
 
         # 1 - weekly, 2 - monthly, 3 - yearly, 4 - alltime
-        if self.current_page == 1:
+        if self.current_page == self.WEEKLY:
             year, month, week = get_todays_date()
             first_day, last_day = get_week_dates(year, week)
 
-            unique_chatters_week = get_distinct_chatters_count_week(c_cursor, year, week)
+            unique_chatters = get_distinct_chatters_count_week(c_cursor, year, week)
             user_rank, id, user_msgs = get_user_rank_top_chatters_week(c_cursor, year, week, user)
-            weekly_server_messages, weekly_server_chars = get_weekly_server_msgs(c_cursor, year, week)
+            server_msgs, server_chars = get_weekly_server_msgs(c_cursor, year, week)
 
-            embed = discord.Embed(color=discord.Color.blue())
-            embed.set_thumbnail(url=ctx.guild.icon)
-            embed.set_author(
-                name=f"""
-                    WEEK {week} | {first_day} - {last_day}
-                    """,
-                icon_url=ctx.guild.icon)
+            author_text = f"WEEK {week} | {first_day} - {last_day}"
 
             top_10_total_msgs = 0
             topten_text = ""
-            rank = 1
 
-            for id, msgs in top_chatters_week(c_cursor, year, week):
-                topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/weekly_server_messages, 1)}%\n"
-
-                rank += 1
+            for rank, (id, msgs) in enumerate(top_chatters_week(c_cursor, year, week), start=1):
+                topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
                 top_10_total_msgs += msgs
 
-            topten_text += f"\n**TOP 10 sent  {round(top_10_total_msgs*100/weekly_server_messages, 1)}% of weekly messages**"
-
-            embed.add_field(
-                name="Rank | Msgs | % of Weekly Server Msgs",
-                value=topten_text, inline=False
-            )
-            embed.add_field(
-                name=f"Server: {unique_chatters_week} Unique Chatters",
-                value=f"""
-                    **{abbreviate_number(weekly_server_messages)}** Messages | {abbreviate_number(weekly_server_chars)} Chars | {int(weekly_server_chars/weekly_server_messages)} Chars/Msg
-                        """
-            )
-            embed.set_footer(
-                icon_url=self.member.avatar,
-                text=(
-                    f"{user_rank}. {self.member.name}#{self.member.discriminator} |"
-                    f" {abbreviate_number(user_msgs)} Msgs | "
-                    f"{round(user_msgs*100/weekly_server_messages, 1)}% of the weeks server messages"
-                )
-            )
-
-        if self.current_page == 2:
+        if self.current_page == self.MONTHLY:
             year, month, week = get_todays_date_actually()
             month_name = get_month_name(month)
 
-            unique_chatters_month = get_distinct_chatters_count_month(c_cursor, year, month)
+            unique_chatters = get_distinct_chatters_count_month(c_cursor, year, month)
             user_rank, id, user_msgs = get_user_rank_top_chatters_month(c_cursor, year, month, user)
-            monthly_server_msgs, monthly_server_chars = get_monthly_server_msgs(c_cursor, year, month)
+            server_msgs, server_chars = get_monthly_server_msgs(c_cursor, year, month)
 
-            embed = discord.Embed(color=discord.Color.blue())
-            embed.set_thumbnail(url=ctx.guild.icon)
-            embed.set_author(
-                name=f"{month_name} {year}\n",
-                icon_url=ctx.guild.icon)
+            author_text = f"{month_name} {str(year)}"
 
             top_10_total_msgs = 0
             topten_text = ""
-            rank = 1
 
-            for id, msgs in top_chatters_month(c_cursor, year, month):
+            for rank, (id, msgs) in enumerate(top_chatters_month(c_cursor, year, month), start=1):
                 top_10_total_msgs += msgs
-                topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/monthly_server_msgs, 1)}%\n"
-                rank += 1
+                topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
 
-            topten_text += f"\n**TOP 10 sent  {round(top_10_total_msgs*100/monthly_server_msgs, 1)}% of monthly messages**"
-
-            embed.add_field(
-                name="Rank | Msgs | % of Monthly Server Msgs",
-                value=topten_text, inline=False
-            )
-            embed.add_field(
-                name=f"Server: {unique_chatters_month} Unique Chatters",
-                value=f"""
-                    **{abbreviate_number(monthly_server_msgs)}** Messages | {abbreviate_number(monthly_server_chars)} Chars | {int(monthly_server_chars/monthly_server_msgs)} Chars/Msg
-                        """)
-            embed.set_footer(
-                icon_url=self.member.avatar,
-                text=f"""
-                    {user_rank}. {self.member.name}#{self.member.discriminator} |{abbreviate_number(user_msgs)} Msgs | {round(user_msgs*100/monthly_server_msgs, 1)}% of the months server messages
-                        """)
-
-        if self.current_page == 3:
+        if self.current_page == self.YEARLY:
             year, month, week = get_todays_date_actually()
-            unique_chatters_year = get_distinct_chatters_count_year(c_cursor, year)
-            user_rank, id, user_msgs = get_user_rank_top_chatters_year(c_cursor, year, user)
-            yearly_server_msgs, yearly_server_chars = get_yearly_server_msgs(c_cursor, year)
 
-            embed = discord.Embed(color=discord.Color.blue())
-            embed.set_thumbnail(url=ctx.guild.icon)
-            embed.set_author(
-                name=year,
-                icon_url=self.ctx.guild.icon
-            )
+            unique_chatters = get_distinct_chatters_count_year(c_cursor, year)
+            user_rank, id, user_msgs = get_user_rank_top_chatters_year(c_cursor, year, user)
+            server_msgs, server_chars = get_yearly_server_msgs(c_cursor, year)
+
+            author_text = year
 
             top_10_total_msgs = 0
             topten_text = ""
-            rank = 1
 
-            for id, msgs in top_chatters_year(c_cursor, year):
+            for rank, (id, msgs) in enumerate(top_chatters_year(c_cursor, year), start=1):
                 top_10_total_msgs += msgs
-                topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/yearly_server_msgs, 1)}%\n"
-                rank += 1
+                topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
 
-            topten_text += f"\n**TOP 10 sent  {round(top_10_total_msgs*100/yearly_server_msgs, 1)}% of yearly messages**"
-
-            embed.add_field(
-                name="Rank | Msgs | % of Yearly Server Msgs",
-                value=topten_text, inline=False
-            )
-            embed.add_field(
-                name=f"Server: {unique_chatters_year} Unique Chatters",
-                value=f"""
-                    **{abbreviate_number(yearly_server_msgs)}** Messages | {abbreviate_number(yearly_server_chars)} Chars | {int(yearly_server_chars/yearly_server_msgs)} Chars/Msg
-                        """)
-            embed.set_footer(
-                icon_url=self.member.avatar,
-                text=f"""
-                    {user_rank}. {self.member.name}#{self.member.discriminator} | {abbreviate_number(user_msgs)} Msgs | {round(user_msgs*100/yearly_server_msgs, 1)}% of the years server messages
-                        """)
-
-        if self.current_page == 4:
+        if self.current_page == self.ALLTIME:
             unique_chatters = get_distinct_chatters_count_alltime(c_cursor)
             user_rank, id, user_msgs = get_user_rank_top_chatters_alltime(c_cursor, user)
             server_msgs, server_chars = get_alltime_server_msgs(c_cursor)
 
-            embed = discord.Embed(color=discord.Color.blue())
-            embed.set_thumbnail(url=ctx.guild.icon)
-            embed.set_author(
-                name="ALL TIME",
-                icon_url=self.ctx.guild.icon)
+            author_text = "All-Time"
 
             top_10_total_msgs = 0
             topten_text = ""
-            rank = 1
 
-            for id, msgs in top_chatters_alltime(c_cursor):
+            for rank, (id, msgs) in enumerate(top_chatters_alltime(c_cursor), start=1):
                 top_10_total_msgs += msgs
                 topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
-                rank += 1
 
-            topten_text += f"\n**TOP 10 sent  {round(top_10_total_msgs*100/server_msgs, 1)}% of all server messages**"
+        # embed construction
+        embed = discord.Embed(color=self.member.color)
+        embed.set_thumbnail(url=ctx.guild.icon)
+        embed.set_author(
+            name=author_text,
+            icon_url=self.ctx.guild.icon
+        )
 
-            embed.add_field(
-                name="Rank | Msgs | % of all Server Msgs",
-                value=topten_text, inline=False
-            )
-            embed.add_field(
-                name=f"Server: {unique_chatters} Unique Chatters",
-                value=f"""
-                    **{abbreviate_number(server_msgs)}** Messages | {abbreviate_number(server_chars)} Chars | {int(server_chars/server_msgs)} Chars/Msg
-                        """
-            )
-            embed.set_footer(
-                icon_url=self.member.avatar,
-                text=f"""
-                    {user_rank}. {self.member.name}#{self.member.discriminator} | {abbreviate_number(user_msgs)} Msgs | {round(user_msgs*100/server_msgs, 1)}% of all server messages
-                        """
-            )
+        time_frame = ["weekly", "monthly", "yearly", "all"]
+        time_text = time_frame[self.current_page - 1]
+
+        topten_text += f"\n**TOP 10 sent  {round(top_10_total_msgs*100/server_msgs, 1)}% of {time_text} server messages**"
+
+        embed.add_field(
+            name=f"Rank | Msgs | % of {time_text} server msgs",
+            value=topten_text, inline=False
+        )
+        embed.add_field(
+            name=f"Server: {unique_chatters} Unique Chatters",
+            value=f"""
+                **{abbreviate_number(server_msgs)}** Messages | {abbreviate_number(server_chars)} Chars | {int(server_chars/server_msgs)} Chars/Msg
+                    """
+        )
+        embed.set_footer(
+            icon_url=self.member.avatar,
+            text=f"""
+                {user_rank}. {self.member.name}#{self.member.discriminator} | {abbreviate_number(user_msgs)} Msgs | {round(user_msgs*100/server_msgs, 1)}% of {time_text} server messages
+                    """
+        )
 
         return embed
 
@@ -261,7 +195,7 @@ class ChatLeaderboardView(discord.ui.View):
         self.weekly.style = discord.ButtonStyle.blurple
         self.monthly.style = discord.ButtonStyle.blurple
         self.yearly.style = discord.ButtonStyle.blurple
-        self.alltime.style = discord.ButtonStyle.green
+        self.alltime.style = discord.ButtonStyle.blurple
 
         self.weekly.disabled = False
         self.monthly.disabled = False
@@ -302,7 +236,7 @@ class ChatLeaderboardView(discord.ui.View):
         await self.update_message()
         await interaction.response.defer()
 
-    @discord.ui.button(label="All-Time", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="All-Time", style=discord.ButtonStyle.blurple)
     async def alltime(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.current_page = 4
         await self.update_message()
