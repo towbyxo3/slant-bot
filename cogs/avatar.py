@@ -192,6 +192,7 @@ class AvatarView(discord.ui.View):
         page 1 - global avatar
         page 2 - server avatar
         """
+        print(self.user.name)
         has_server_avatar = (self.user.avatar != self.user.display_avatar) and (self.user.avatar is not None)
         if self.current_page == 1:
             self.global_avatar.disabled = True
@@ -493,10 +494,7 @@ class AvHistory(commands.Cog):
                     file_name = f"{av.key}.{'gif' if av.is_animated() else 'png'}"
                     file_bytes = await av.read()
                     channel = self.bot.get_channel(self.channel_avatar_history_images)
-                    text = f"{member}'s avatar (ID: {member.id})"
-                    member = channel.guild.get_member(member.id)
-                    if member:
-                        text += f" {member.mention}"
+                    text = f"{member.name}'s avatar (ID: {member.id})"
                     m = await channel.send(
                         file=discord.File(io.BytesIO(file_bytes), filename=file_name),
                         content=text,
