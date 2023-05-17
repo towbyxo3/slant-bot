@@ -18,6 +18,10 @@ class AgeView(discord.ui.View):
     and toggling between the 2 base criteria (registration or join date).
     """
 
+    # PAGE NAMES
+    REGISTRATION = 1
+    JOIN = 2
+
     # representing the current page of the leaderboard
     # page 1 for registration date
     # page 2 for join date
@@ -38,75 +42,52 @@ class AgeView(discord.ui.View):
         """
         Gathers the leaderboard data based on pressed buttons and creates embed.
         """
-        if self.current_page == 1:
-            true_member_count = len([m for m in self.ctx.guild.members if not m.bot])
-            member_list = {}
-            guild = self.ctx.guild
-            for member in guild.members:
-                if not member.bot:
-                    member_name = member.id
-                    member_register = str(member.created_at)[:16]
-                    member_list[member_name] = member_register
-            sorted_list = sorted(member_list.items(), key=lambda x: x[1], reverse=self.sort_by_youngest)
 
-            embed = discord.Embed(
-                title=f"{'Youngest' if self.sort_by_youngest else 'Oldest'} Discord Users in {guild.name}",
-                timestamp=self.ctx.message.created_at,
-                color=discord.Color.red()
-            )
-            embed.set_author(
-                name=f"{guild.name} Leaderboard",
-                icon_url=guild.icon
-            )
-            embed.set_thumbnail(url=guild.icon)
+        true_member_count = len([m for m in self.ctx.guild.members if not m.bot])
+        guild = self.ctx.guild
 
-            leaderboard_text = ""
+        # determine title text
+        if self.current_page == self.REGISTRATION:
+            title = f"{'Youngest' if self.sort_by_youngest else 'Oldest'} Discord Users in {self.ctx.guild.name}"
+        elif self.current_page == self.JOIN:
+            title = f"{'Youngest' if self.sort_by_youngest else 'Oldest'} {self.ctx.guild.name} Members"
 
-            for rank, data in enumerate(sorted_list[:self.num], 1):
-                date = format_YMD_to_DMY(data[1][:10])
-                user = f"<@{data[0]}>"
-                leaderboard_text += f"`{rank}.` | {user} {date}\n"
+        # loops through guild members andfilters out bots and
+        # stores {member.id: registration or join date} key value pair in the dictionary.
+        member_list = {
+            member.id: str(member.created_at)[:16] if self.current_page == self.REGISTRATION else str(member.joined_at)[:16]
+            for member in guild.members
+            if not member.bot
+        }
 
-            embed.add_field(
-                name="Rank | Member | Created on",
-                value=leaderboard_text,
-                inline=False
-            )
-            embed.set_footer(text=f"{rank} out of {true_member_count} Members")
-        elif self.current_page == 2:
-            true_member_count = len([m for m in self.ctx.guild.members if not m.bot])
-            member_list = {}
-            guild = self.ctx.guild
-            for member in guild.members:
-                if not member.bot:
-                    member_name = member.id
-                    member_register = str(member.joined_at)[:16]
-                    member_list[member_name] = member_register
-            sorted_list = sorted(member_list.items(), key=lambda x: x[1], reverse=self.sort_by_youngest)
+        # key value pair in the dictioanry  will be sorted based on their registration or join date
+        sorted_list = sorted(member_list.items(), key=lambda x: x[1], reverse=self.sort_by_youngest)
 
-            embed = discord.Embed(
-                title=f"{'Youngest' if self.sort_by_youngest else 'Oldest'} {guild.name} Members",
-                timestamp=self.ctx.message.created_at,
-                color=discord.Color.red()
-            )
-            embed.set_author(
-                name=f"{guild.name} Leaderboard",
-                icon_url=guild.icon
-            )
-            embed.set_thumbnail(url=guild.icon)
+        # construct embed
+        embed = discord.Embed(
+            title=title,
+            timestamp=self.ctx.message.created_at,
+            color=discord.Color.red()
+        )
+        embed.set_author(
+            name=f"{guild.name} Leaderboard",
+            icon_url=guild.icon
+        )
+        embed.set_thumbnail(url=guild.icon)
 
-            leaderboard_text = ""
-            for rank, data in enumerate(sorted_list[:self.num], 1):
-                date = format_YMD_to_DMY(data[1][:10])
-                user = f"<@{data[0]}>"
-                leaderboard_text += f"`{rank}.` | {user} {date}\n"
+        leaderboard_text = ""
 
-            embed.add_field(
-                name="Rank | Member | Joined on",
-                value=leaderboard_text,
-                inline=False
-            )
-            embed.set_footer(text=f"{rank} out of {true_member_count} Members")
+        for rank, data in enumerate(sorted_list[:self.num], 1):
+            date = format_YMD_to_DMY(data[1][:10])
+            user = f"<@{data[0]}>"
+            leaderboard_text += f"`{rank}.` | {user} {date}\n"
+
+        embed.add_field(
+            name="Rank | Member | Created on",
+            value=leaderboard_text,
+            inline=False
+        )
+        embed.set_footer(text=f"{rank} out of {true_member_count} Members")
 
         return embed
 
@@ -124,13 +105,13 @@ class AgeView(discord.ui.View):
         page 1 - leaderboard sorted by registration date
         page 2 - leaderboard sorted by join date
         """
-        if self.current_page == 1:
+        if self.current_page == self.REGISTRATION:
             self.registration.disabled = True
             self.join.disabled = False
             self.registration.style = discord.ButtonStyle.gray
             self.join.style = discord.ButtonStyle.green
 
-        if self.current_page == 2:
+        if self.current_page == self.JOIN:
             self.registration.disabled = False
             self.join.disabled = True
             self.registration.style = discord.ButtonStyle.green
