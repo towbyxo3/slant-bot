@@ -34,6 +34,24 @@ change = '+' + str(rank_diff) if rank_diff > 0 else str(rank_diff) if rank_diff 
 """
 
 
+def create_top10_text(lb_data, server_msgs):
+    """
+    Creates the top ten text representation and
+    calculates the total number of messages sent by the top chatters.
+
+    lb_data (list): A list of tuples representing the leaderboard data.
+                    (id, msgs a member sent)
+    server_msgs (int): The total number of server msgs in a time period.
+    """
+    top_10_total_msgs = 0
+    topten_text = ""
+    for rank, (id, msgs) in enumerate(lb_data, start=1):
+        top_10_total_msgs += msgs
+        topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
+
+    return topten_text, top_10_total_msgs
+
+
 class ChatLeaderboardView(discord.ui.View):
     """
     View that displays a server's chat leaderboard with a focus on
@@ -41,18 +59,17 @@ class ChatLeaderboardView(discord.ui.View):
     on the server and then creates an embed with the information, including
     rankings, percentages, and server-wide metrics, for different time periods.
     """
-    # representing the current page of the leaderboard
     # page 1 - weekly chat leaderboard
     # page 2 - monthly chat leaderboard
     # page 3 - yearly chat leaderboard
     # page 4 - alltime chat leaderboard
-
-    current_page: int = 1
-
     WEEKLY = 1
     MONTHLY = 2
     YEARLY = 3
     ALLTIME = 4
+
+    # representing the current page of the leaderboard
+    current_page: int = 1
 
     async def send(self, ctx):
         """
@@ -93,12 +110,7 @@ class ChatLeaderboardView(discord.ui.View):
 
             author_text = f"WEEK {week} | {first_day} - {last_day}"
 
-            top_10_total_msgs = 0
-            topten_text = ""
-
-            for rank, (id, msgs) in enumerate(top_chatters_week(c_cursor, year, week), start=1):
-                topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
-                top_10_total_msgs += msgs
+            topten_text, top_10_total_msgs = create_top10_text(top_chatters_week(c_cursor, year, week), server_msgs)
 
         if self.current_page == self.MONTHLY:
             year, month, week = get_todays_date_actually()
@@ -109,13 +121,7 @@ class ChatLeaderboardView(discord.ui.View):
             server_msgs, server_chars = get_monthly_server_msgs(c_cursor, year, month)
 
             author_text = f"{month_name} {str(year)}"
-
-            top_10_total_msgs = 0
-            topten_text = ""
-
-            for rank, (id, msgs) in enumerate(top_chatters_month(c_cursor, year, month), start=1):
-                top_10_total_msgs += msgs
-                topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
+            topten_text, top_10_total_msgs = create_top10_text(top_chatters_month(c_cursor, year, month), server_msgs)
 
         if self.current_page == self.YEARLY:
             year, month, week = get_todays_date_actually()
@@ -125,13 +131,7 @@ class ChatLeaderboardView(discord.ui.View):
             server_msgs, server_chars = get_yearly_server_msgs(c_cursor, year)
 
             author_text = year
-
-            top_10_total_msgs = 0
-            topten_text = ""
-
-            for rank, (id, msgs) in enumerate(top_chatters_year(c_cursor, year), start=1):
-                top_10_total_msgs += msgs
-                topten_text += f"`{rank}.`  <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
+            topten_text, top_10_total_msgs = create_top10_text(top_chatters_year(c_cursor, year), server_msgs)
 
         if self.current_page == self.ALLTIME:
             unique_chatters = get_distinct_chatters_count_alltime(c_cursor)
@@ -139,13 +139,7 @@ class ChatLeaderboardView(discord.ui.View):
             server_msgs, server_chars = get_alltime_server_msgs(c_cursor)
 
             author_text = "All-Time"
-
-            top_10_total_msgs = 0
-            topten_text = ""
-
-            for rank, (id, msgs) in enumerate(top_chatters_alltime(c_cursor), start=1):
-                top_10_total_msgs += msgs
-                topten_text += f"`{rank}.` <@{id}> **{abbreviate_number(msgs)}** Msgs | {round(msgs*100/server_msgs, 1)}%\n"
+            topten_text, top_10_total_msgs = create_top10_text(top_chatters_alltime(c_cursor), server_msgs)
 
         # embed construction
         embed = discord.Embed(color=self.member.color)
