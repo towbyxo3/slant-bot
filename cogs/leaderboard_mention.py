@@ -301,6 +301,12 @@ class MentionLeaderboard(commands.Cog):
 
     @commands.command(alises=["mentionlb", "mentionleaderboard", "mentions", "mentionslb", "taglb", "mosttags"])
     async def mention(self, ctx, member: discord.Member = None):
+        """
+        Displays three mention leaderboards and allows switching between them,
+        - showing the top members with the most mentions,
+        - the members who mention a specific member the most,
+        - and the members who are mentioned the most by a specific member.
+        """
         if member is None:
             member = ctx.author
 
