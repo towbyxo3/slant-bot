@@ -24,6 +24,10 @@ class Crowns(commands.Cog):
 
     @commands.command(alises=["crown", "crownlb", "crownleaderboard"])
     async def crowns(self, ctx, member: discord.Member = None):
+        """
+        Shows leaderboard of members who got the most crowns. A crown is
+        obtained for being the member with the most messages sent in a day.
+        """
         if member is None:
             member = ctx.author
         user = member.id
