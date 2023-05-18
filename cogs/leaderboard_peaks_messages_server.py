@@ -34,7 +34,7 @@ class ServerpeakView(discord.ui.View):
     MONTHLY = 3
     YEARLY = 4
 
-    # representing the current page of the leaderboard
+    # representing the current page of the pagination
     current_page: int = 1
 
     async def send(self, ctx):
@@ -76,7 +76,7 @@ class ServerpeakView(discord.ui.View):
             name="Rank | Messages | Date",
             value=topten_text
         )
-        embed.set_footer(text=f"{rank-1} out of {days} Days")
+        embed.set_footer(text=f"{rank} out of {days} Days")
 
         return embed
 
@@ -108,7 +108,7 @@ class ServerpeakView(discord.ui.View):
         embed.add_field(
             name="Rank | Messages | Week",
             value=topten_text)
-        embed.set_footer(text=f"{rank-1} out of {weeks} Weeks")
+        embed.set_footer(text=f"{rank} out of {weeks} Weeks")
 
         return embed
 
@@ -141,7 +141,7 @@ class ServerpeakView(discord.ui.View):
         embed.add_field(
             name="Rank | Messages | Month",
             value=topten_text)
-        embed.set_footer(text=f"{rank-1} out of {months} Months")
+        embed.set_footer(text=f"{rank} out of {months} Months")
 
         return embed
 
@@ -172,7 +172,7 @@ class ServerpeakView(discord.ui.View):
         embed.add_field(
             name="Rank | Messages | Year",
             value=topten_text)
-        embed.set_footer(text=f"{rank-1} out of {years} Years")
+        embed.set_footer(text=f"{rank} out of {years} Years")
 
         return embed
 
