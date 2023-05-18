@@ -143,6 +143,8 @@ class AvatarView(discord.ui.View):
     Additionally, there is a "History" button that, when clicked,
     displays the user's avatar history.
     """
+    GLOBAL_AV = 1
+    SERVER_AV = 2
 
     current_page: int = 1
     history_button_trigger = False
@@ -192,15 +194,14 @@ class AvatarView(discord.ui.View):
         page 1 - global avatar
         page 2 - server avatar
         """
-        print(self.user.name)
         has_server_avatar = (self.user.avatar != self.user.display_avatar) and (self.user.avatar is not None)
-        if self.current_page == 1:
+        if self.current_page == self.GLOBAL_AV:
             self.global_avatar.disabled = True
             self.server_avatar.disabled = not has_server_avatar
             self.global_avatar.style = discord.ButtonStyle.gray
             self.server_avatar.style = discord.ButtonStyle.blurple if has_server_avatar else discord.ButtonStyle.gray
 
-        if self.current_page == 2:
+        if self.current_page == self.SERVER_AV:
             self.global_avatar.disabled = False
             self.server_avatar.disabled = True
             self.global_avatar.style = discord.ButtonStyle.blurple
