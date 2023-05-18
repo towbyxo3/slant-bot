@@ -203,30 +203,24 @@ class ServerpeakView(discord.ui.View):
         """
         Updates the state of the buttons based on the current page.
         """
-        self.days.disabled = False
-        self.weeks.disabled = False
-        self.months.disabled = False
-        self.years.disabled = False
-        self.days.style = discord.ButtonStyle.green
-        self.weeks.style = discord.ButtonStyle.green
-        self.months.style = discord.ButtonStyle.green
-        self.years.style = discord.ButtonStyle.green
+        # Dictionary mapping buttons to their corresponding page values
+        button_mapping = {
+            self.days: self.DAILY,
+            self.weeks: self.WEEKLY,
+            self.months: self.MONTHLY,
+            self.years: self.YEARLY
+        }
 
-        if self.current_page == self.DAILY:
-            self.days.disabled = True
-            self.days.style = discord.ButtonStyle.gray
+        # Iterate over the dictionary items
+        for button, page in button_mapping.items():
+            # Reset button attributes
+            button.disabled = False
+            button.style = discord.ButtonStyle.green
 
-        if self.current_page == self.WEEKLY:
-            self.weeks.disabled = True
-            self.weeks.style = discord.ButtonStyle.gray
-
-        if self.current_page == self.MONTHLY:
-            self.months.disabled = True
-            self.months.style = discord.ButtonStyle.gray
-
-        if self.current_page == self.YEARLY:
-            self.years.disabled = True
-            self.years.style = discord.ButtonStyle.gray
+            # Set button attributes based on the current page
+            if self.current_page == page:
+                button.disabled = True
+                button.style = discord.ButtonStyle.gray
 
     @discord.ui.button(label="Days", style=discord.ButtonStyle.green)
     async def days(self, interaction: discord.Interaction, button: discord.ui.Button):
