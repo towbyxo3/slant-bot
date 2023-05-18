@@ -254,24 +254,22 @@ class MentionLeaderboardView(discord.ui.View):
         """
         Updates the state of the buttons based on the current page.
         """
-        self.mentionslb.disabled = False
-        self.tagged_by.disabled = False
-        self.tagged.disabled = False
-        self.mentionslb.style = discord.ButtonStyle.green
-        self.tagged_by.style = discord.ButtonStyle.green
-        self.tagged.style = discord.ButtonStyle.green
+        button_mapping = {
+            self.mentionslb: self.MENTIONS_LB,
+            self.tagged_by: self.TAGGED_BY,
+            self.tagged: self.TAGGED
+        }
 
-        if self.current_page == self.MENTIONS_LB:
-            self.mentionslb.disabled = True
-            self.mentionslb.style = discord.ButtonStyle.gray
+        # Iterate over the dictionary items
+        for button, page in button_mapping.items():
+            # Reset button attributes
+            button.disabled = False
+            button.style = discord.ButtonStyle.green
 
-        if self.current_page == self.TAGGED_BY:
-            self.tagged_by.disabled = True
-            self.tagged_by.style = discord.ButtonStyle.gray
-
-        if self.current_page == self.TAGGED:
-            self.tagged.disabled = True
-            self.tagged.style = discord.ButtonStyle.gray
+            # Set button attributes based on the current page
+            if self.current_page == page:
+                button.disabled = True
+                button.style = discord.ButtonStyle.gray
 
     @discord.ui.button(label="Mention Leaderboard", style=discord.ButtonStyle.gray)
     async def mentionslb(self, interaction: discord.Interaction, button: discord.ui.Button):
