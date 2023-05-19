@@ -136,7 +136,7 @@ class Discord_Info(commands.Cog):
         pagination_view.ctx = ctx
         await pagination_view.send(ctx)
 
-    @commands.command(aliases=['userinfo', 'ui'])
+    @commands.command(aliases=['userinfo', 'ui', 'memberinfo', 'mi'])
     async def user(self, ctx: Context[BotT], *, member: discord.Member = None):
         """ Get member information """
         member = member or ctx.author
@@ -146,15 +146,19 @@ class Discord_Info(commands.Cog):
             "dnd": "🔴",
             "offline": "⚫"
         }
+
         show_roles = "None"
+        # Check if the member has more than one role
         if len(member.roles) > 1:
+            # Join the role mentions using a list comprehension
             show_roles = ", ".join([
-                f"<@&{x.id}>" for x in sorted(
+                f"<@&{role.id}>" for role in sorted(
                     member.roles,
-                    key=lambda x: x.position,
+                    key=lambda role: role.position,
                     reverse=True
                 )
-                if x.id != ctx.guild.default_role.id
+                # Exclude the default role
+                if role.id != ctx.guild.default_role.id
             ])
 
         embed = discord.Embed(colour=member.top_role.colour.value)
@@ -164,12 +168,18 @@ class Discord_Info(commands.Cog):
         embed.add_field(name="@", value=f"<@{member.id}>")
 
         try:
-            c_DB = sqlite3.connect("chat.db")
-            c_cursor = c_DB.cursor()
-            user_rank, id, user_msgs = get_user_rank_top_chatters_alltime(c_cursor, member.id)
-            embed.add_field(name="Messages", value=f"{abbreviate_number(user_msgs)} (#{user_rank})")
+            # Connect to the SQLite database
+            with sqlite3.connect("chat.db") as c_DB:
+                c_cursor = c_DB.cursor()
+                user_rank, _, user_msgs = get_user_rank_top_chatters_alltime(c_cursor, member.id)
+                # Add field with abbreviated message count and user rank
+                embed.add_field(
+                    name="Messages",
+                    value=f"{abbreviate_number(user_msgs)} (#{user_rank})"
+                )
         except Exception as e:
             print(e)
+
         embed.add_field(name="Registered", value=default.date(member.created_at), inline=False)
         embed.add_field(name="Joined", value=default.date(member.joined_at))
         embed.add_field(name=f"Roles ({len(member.roles)-1})", value=show_roles, inline=False)
