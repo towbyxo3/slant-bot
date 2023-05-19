@@ -14,115 +14,129 @@ sys.path.append("queries")
 sys.path.append("helpers")
 
 
+class ServerinfoView(discord.ui.View):
+    """
+    View to display the server info,
+    with the options to show the server icon and server banner.
+    """
+    # whether the the history button has been used yet
+    icon_button_trigger = False
+    banner_button_trigger = False
+
+    async def send(self, ctx):
+        """
+        Send the view to a channel. It creates a message
+        containing the view and updates it.
+        """
+        self.message = await ctx.send(view=self)
+        await self.update_message()
+
+    def create_embed(self):
+        """
+        Creates the embed with the respective avatar
+        (global or server depending on current page/previously pressed button).
+        """
+        """ Check info about current server """
+
+        guild = self.ctx.guild
+        ctx = self.ctx
+
+        # overview of embed field name - value pairs.
+        field_data = [
+            ("Owner", guild.owner),
+            ("Members", guild.member_count),
+            ("Roles", len(guild.roles)),
+            ("Text Channels", len(guild.text_channels)),
+            ("Voice Channels", len(guild.voice_channels)),
+            ("Boosts", guild.premium_subscription_count),
+            ("Created", default.date(guild.created_at, ago=True))
+        ]
+
+        # construct embed
+        embed = discord.Embed(
+            description="Best Server on Discord!",
+            timestamp=ctx.message.created_at,
+            color=ctx.guild.me.color
+        )
+        embed.set_author(name=guild.name, icon_url=guild.banner)
+        embed.set_thumbnail(url=guild.icon)
+
+        # add fields
+        for name, value in field_data:
+            embed.add_field(name=name, value=value)
+
+        embed.set_footer(icon_url=ctx.author.display_avatar, text=f"Server ID: {guild.id}")
+
+        return embed
+
+    async def update_message(self):
+        """
+        Updates the message with the current state of the view.
+        It updates the buttons and the embed.
+        """
+        self.update_buttons()
+        await self.message.edit(embed=self.create_embed(), view=self)
+
+    def update_buttons(self):
+        """
+        Updates the state of the buttons based on the current page.
+        """
+        # history button is disabled after its triggered to avoid spam
+        if self.icon_button_trigger is True:
+            self.icon.disabled = True
+            self.icon.style = discord.ButtonStyle.gray
+        elif not self.ctx.guild.icon:
+            self.icon.label = "No Icon"
+            self.icon.disabled = True
+            self.icon.style = discord.ButtonStyle.gray
+
+        if self.banner_button_trigger is True:
+            self.banner.disabled = True
+            self.banner.style = discord.ButtonStyle.gray
+        elif not self.ctx.guild.banner:
+            self.banner.label = "No Banner"
+            self.banner.disabled = True
+            self.banner.style = discord.ButtonStyle.gray
+
+    @discord.ui.button(label="Icon", style=discord.ButtonStyle.green)
+    async def icon(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """ Get the current server icon """
+        await interaction.response.defer()
+        self.icon_button_trigger = True
+        await self.update_message()
+        ctx = self.ctx
+
+        embed = discord.Embed(title="Server Icon")
+        embed.set_image(url=ctx.guild.icon)
+        await ctx.send(embed=embed)
+
+    @discord.ui.button(label="Banner", style=discord.ButtonStyle.primary)
+    async def banner(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """ Get the current banner image """
+        await interaction.response.defer()
+        self.banner_button_trigger = True
+        await self.update_message()
+        ctx = self.ctx
+
+        embed = discord.Embed(title="Server Banner")
+        embed.set_image(url=ctx.guild.banner)
+        await ctx.send(embed=embed)
+
+
 class Discord_Info(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
 
-    @commands.command()
-    @commands.guild_only()
-    async def roles(self, ctx: Context[BotT]):
-        """ Get all roles in current server """
-        allroles = ""
-
-        for num, role in enumerate(sorted(ctx.guild.roles, reverse=True), start=1):
-            allroles += f"[{str(num).zfill(2)}] {role.id}\t{role.name}\t[ Users: {len(role.members)} ]\r\n"
-
-        data = BytesIO(allroles.encode("utf-8"))
-        await ctx.send(content=f"Roles in **{ctx.guild.name}**", file=discord.File(data, filename=f"{default.timetext('Roles')}"))
-
-    @commands.command(aliases=["joindate", "joined"])
-    @commands.guild_only()
-    async def joinedat(self, ctx: Context[BotT], *, user: discord.Member = None):
-        """ Check when a user joined the current server """
-        user = user or ctx.author
-        await ctx.send("\n".join([
-            f"**{user}** joined **{ctx.guild.name}**",
-            f"{default.date(user.joined_at, ago=True)}"
-        ]))
-
-    @commands.command()
-    @commands.guild_only()
-    async def mods(self, ctx: Context[BotT]):
-        """ Check which mods are online on current guild """
-        message = ""
-        all_status = {
-            "online": {"users": [], "emoji": "🟢"},
-            "idle": {"users": [], "emoji": "🟡"},
-            "dnd": {"users": [], "emoji": "🔴"},
-            "offline": {"users": [], "emoji": "⚫"}
-        }
-
-        for user in ctx.guild.members:
-            user_perm = ctx.channel.permissions_for(user)
-            if user_perm.kick_members or user_perm.ban_members:
-                if not user.bot:
-                    all_status[str(user.status)]["users"].append(f"**{user}**")
-
-        for g in all_status:
-            if all_status[g]["users"]:
-                message += f"{all_status[g]['emoji']} {', '.join(all_status[g]['users'])}\n"
-
-        await ctx.send(f"Mods in **{ctx.guild.name}**\n{message}")
-
-    @commands.group(aliases=['si', 'serverinfo'])
-    @commands.guild_only()
+    @commands.command(aliases=['si', 'serverinfo'])
     async def server(self, ctx: Context[BotT]):
         """ Check info about current server """
-
-        guild = ctx.guild
-
-        embed = discord.Embed(description="Best server on Discord!",
-                              timestamp=ctx.message.created_at,
-                              color=discord.Color.blue())
-        embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.banner)
-        embed.set_thumbnail(url=ctx.guild.icon)
-        embed.add_field(name="Owner", value=guild.owner)
-        embed.add_field(name="Members", value=guild.member_count)
-        embed.add_field(name="Roles", value=len(guild.roles))
-        embed.add_field(name="Text Channels", value=len(guild.text_channels))
-        embed.add_field(name="Voice Channels", value=len(ctx.guild.voice_channels))
-        embed.add_field(name="Boosts", value=guild.premium_subscription_count)
-        embed.add_field(name="Created", value=default.date(ctx.guild.created_at, ago=True))
-        embed.set_footer(icon_url=ctx.author.avatar, text="Server ID: " + str(guild.id))
-        await ctx.send(embed=embed)
-
-    @server.command(name="avatar", aliases=["icon"])
-    @commands.guild_only()
-    async def server_avatar(self, ctx: Context[BotT]):
-        """ Get the current server icon """
-        if not ctx.guild.icon:
-            return await ctx.send("This server does not have an icon...")
-
-        format_list = []
-        formats = ["JPEG", "PNG", "WebP"]
-        if ctx.guild.icon.is_animated():
-            formats.append("GIF")
-
-        for img_format in formats:
-            format_list.append(
-                f"[{img_format}]({ctx.guild.icon.replace(format=img_format.lower(), size=1024)})")
-
-        embed = discord.Embed()
-        embed.set_image(url=f"{ctx.guild.icon.with_size(256).with_static_format('png')}")
-        embed.title = "Icon formats"
-        embed.description = " **-** ".join(format_list)
-
-        await ctx.send(f"🖼 Icon to **{ctx.guild.name}**", embed=embed)
-
-    @server.command(name="banner")
-    async def server_banner(self, ctx: Context[BotT]):
-        """ Get the current banner image """
-        if not ctx.guild.banner:
-            return await ctx.send("This server does not have a banner...")
-
-        await ctx.send("\n".join([
-            f"Banner of **{ctx.guild.name}**",
-            f"{ctx.guild.banner.with_format('png')}"
-        ]))
+        pagination_view = ServerinfoView(timeout=120)
+        pagination_view.member = ctx.author
+        pagination_view.ctx = ctx
+        await pagination_view.send(ctx)
 
     @commands.command(aliases=['userinfo', 'ui'])
-    @commands.guild_only()
     async def user(self, ctx: Context[BotT], *, member: discord.Member = None):
         """ Get member information """
         member = member or ctx.author
@@ -154,10 +168,10 @@ class Discord_Info(commands.Cog):
             c_cursor = c_DB.cursor()
             user_rank, id, user_msgs = get_user_rank_top_chatters_alltime(c_cursor, member.id)
             embed.add_field(name="Messages", value=f"{abbreviate_number(user_msgs)} (#{user_rank})")
-        except:
-            pass
+        except Exception as e:
+            print(e)
         embed.add_field(name="Registered", value=default.date(member.created_at), inline=False)
-        embed.add_field(name="Joined B40", value=default.date(member.joined_at))
+        embed.add_field(name="Joined", value=default.date(member.joined_at))
         embed.add_field(name=f"Roles ({len(member.roles)-1})", value=show_roles, inline=False)
         embed.set_footer(text=f"{all_status[str(member.status)]}: {member} · {member.id}")
 
@@ -166,7 +180,7 @@ class Discord_Info(commands.Cog):
     @commands.command()
     async def names(self, ctx, member: discord.Member = None):
         """
-        Gets history of names of user.
+        Get a member's history of names.
         """
         if member is None:
             member = ctx.author

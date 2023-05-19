@@ -2,14 +2,11 @@ import sqlite3
 import discord
 import psutil
 import os
-from discord import ui
 import datetime
-from typing import Union
-
-from discord.ext import commands
-from utils import default
 import io
 import sys
+from discord.ext import commands
+from utils import default
 from queries.userchatqueries import *
 from queries.serverchatqueries import *
 from helpers.dateformatting import *
@@ -138,15 +135,17 @@ def get_avatar_history(cursor, id):
 
 class AvatarView(discord.ui.View):
     """
-    View to display an embed showing the user's current avatar, and the
-    user can toggle between their global and server avatar.
+    View to display an embed showing the user's current avatar(s).
+    Toggle ability between global and server avatar if server avatar exists.
     Additionally, there is a "History" button that, when clicked,
     displays the user's avatar history.
     """
     GLOBAL_AV = 1
     SERVER_AV = 2
 
+    # represents current page number, default is 1
     current_page: int = 1
+    # whether the the history button has been used yet
     history_button_trigger = False
 
     async def send(self, ctx):
@@ -194,6 +193,7 @@ class AvatarView(discord.ui.View):
         page 1 - global avatar
         page 2 - server avatar
         """
+        # logic to determine if a member has a server avatar
         has_server_avatar = (self.user.avatar != self.user.display_avatar) and (self.user.avatar is not None)
         if self.current_page == self.GLOBAL_AV:
             self.global_avatar.disabled = True
@@ -227,6 +227,10 @@ class AvatarView(discord.ui.View):
 
     @discord.ui.button(label="History", style=discord.ButtonStyle.primary)
     async def history(self, interaction: discord.Interaction, button: discord.ui.Button):
+        """
+        If the history button is pressed, a new additional view (AvatarHistoryView)
+        is sent to the channel.
+        """
         await interaction.response.defer()
         self.history_button_trigger = True
         await self.update_message()
@@ -254,6 +258,7 @@ class AvatarView(discord.ui.View):
             await self.ctx.send(embed=embed)
             return
 
+        # create new view with the members avatar history
         pagination_view = AvatarHistoryView(timeout=120)
         pagination_view.data = data
 
@@ -428,9 +433,13 @@ class AvHistory(commands.Cog):
 
     @commands.Cog.listener()
     async def on_user_update(self, before, after):
+        """
+        Store new member avatars in database.
+        """
         if (before.avatar is None) and (after.avatar is None):
             return
 
+        # connect to avatar history database
         avh_DB = sqlite3.connect('avhistory.db')
         avh_cursor = avh_DB.cursor()
         avh_create_table(avh_cursor, avh_DB)
@@ -471,13 +480,11 @@ class AvHistory(commands.Cog):
             except (discord.NotFound, discord.HTTPException, AttributeError):
                 pass
 
-    @commands.command(aliases=['av', 'pfp', 'avt', 'pf', 'avh', 'avatarhistory', 'icon', 'picture'])
+    @commands.command(aliases=['av', 'pfp', 'avt', 'pf', 'avh', 'avatarhistory', 'icon', 'picture', 'profilepicture'])
     async def avatar(self, ctx, member: discord.Member = None):
         """
         Displays a members global (and if given, server avatar in a embed view).
         Additonally, you get the option to view a members past avatars.
-
-        member: @member
         """
 
         if member is None:

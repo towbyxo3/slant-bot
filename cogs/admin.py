@@ -101,16 +101,6 @@ class Admin(commands.Cog):
             return await ctx.send(f"Module **{name_maker}** returned error and was not reloaded...\n{error}")
         await ctx.send(f"Reloaded module **{name_maker}**")
 
-    @commands.command()
-    @commands.check(permissions.is_owner)
-    async def dm(self, ctx: Context[BotT], user: discord.User, *, message: str):
-        """ DM the user of your choice """
-        try:
-            await user.send(message)
-            await ctx.send(f"Sent a DM to **{user}**")
-        except discord.Forbidden:
-            await ctx.send("User might be having DMs blocked or it's a bot account...")
-
     @commands.group()
     @commands.check(permissions.is_owner)
     async def change(self, ctx: Context[BotT]):
@@ -176,15 +166,15 @@ class Admin(commands.Cog):
         try:
             bio = await http.get(url, res_method="read")
             await self.bot.user.edit(avatar=bio)
-            await ctx.send(f"Successfully changed the avatar. Currently using:\n{url}")
+            await ctx.send(":white_check_mark:")
         except aiohttp.InvalidURL:
-            await ctx.send("The URL is invalid...")
+            await ctx.send("Invalid URL")
         except discord.InvalidArgument:
-            await ctx.send("This URL does not contain a useable image")
+            await ctx.send("URL does not contain a useable image")
         except discord.HTTPException as err:
             await ctx.send(err)
         except TypeError:
-            await ctx.send("You need to either provide an image URL or upload one with the command")
+            await ctx.send("Provide URL or image file with the message.")
 
 
 async def setup(bot):
