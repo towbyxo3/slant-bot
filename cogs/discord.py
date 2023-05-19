@@ -98,7 +98,7 @@ class ServerinfoView(discord.ui.View):
             self.banner.disabled = True
             self.banner.style = discord.ButtonStyle.gray
 
-    @discord.ui.button(label="Icon", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Icon", style=discord.ButtonStyle.primary)
     async def icon(self, interaction: discord.Interaction, button: discord.ui.Button):
         """ Get the current server icon """
         await interaction.response.defer()
