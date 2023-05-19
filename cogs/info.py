@@ -9,52 +9,56 @@ from discord.ext import commands
 from utils import default, http
 
 from urllib import parse, request
-import re
 import requests
 import json
-import flag
-import math
-import pycountry
 
 
 def get_country_information(country):
     """
-    API function that gathers information about a country and returns them as tuple.
+    API function that gathers information about a country and returns them as a dictionary.
     API source: https://restcountries.com/
-    """
 
+    country: country for which information should be retrieved
+
+    c - country
+    s - short
+    l - long
+    """
     url = f"https://restcountries.com/v3.1/name/{country}"
     data = requests.get(url).json()
 
-    region = data[0]["subregion"]  # subregion
-    region_s = data[0]["region"]  # subregion
-    c_name_l = data[0]["name"]["common"]  # long country name
-    flag_icon = data[0]["flag"]  # flag as icon
-    c_name_s = data[0]["cca2"]  # short country name
-    capital = data[0]["capital"][0]  # capital city
+    country_data = {}
+
+    country_data["region"] = data[0]["subregion"]
+    country_data["region_s"] = data[0]["region"]
+    country_data["c_name_l"] = data[0]["name"]["common"]
+    country_data["flag_icon"] = data[0]["flag"]
+    country_data["c_name_s"] = data[0]["cca2"]
+    country_data["capital"] = data[0]["capital"][0]
 
     currencydata = data[0]["currencies"]
     currency_short, value = list(currencydata.items())[0]
-    curr_name = value["name"]  # name of currency
-    currr_symbol = value["symbol"]  # currency symbol
+    country_data["curr_name"] = value["name"]
+    country_data["currr_symbol"] = value["symbol"]
 
     languages = data[0]["languages"]
     language_list = []
 
-    # covert tuple to a readable string
+    # convert tuple to a readable string
     for slang, language in languages.items():
         language_list.append(language)
 
-    language_list = ', '.join(language_list)
+    country_data["language_list"] = ', '.join(language_list)
 
-    flag_data = data[0]["flags"]["png"]  # flag as pic
+    country_data["flag_data"] = data[0]["flags"]["png"]
 
-    populatation = data[0]["population"]
-    popu_short = convert_to_readable_format(populatation)  # population in human readable format
+    population = data[0]["population"]
+    country_data["popu_short"] = convert_to_readable_format(population)
+
     area = data[0]["area"] / 1000
-    area_short = '{:,}'.format(area).replace(',', '.') + " km²"  # area human-readable
+    country_data["area_short"] = '{:,}'.format(area).replace(',', '.') + " km²"
 
-    return flag_icon, c_name_s, c_name_l, capital, curr_name, currr_symbol, language_list, flag_data, popu_short, area_short, region, region_s
+    return country_data
 
 
 def convert_to_readable_format(num):
@@ -83,7 +87,6 @@ class Information(commands.Cog):
     @commands.command()
     async def ping(self, ctx: Context[BotT]):
         """ Pong! """
-        before = time.monotonic()
         before_ws = int(round(self.bot.latency * 1000, 1))
         message = await ctx.send("🏓 Pong")
         await message.edit(content=f"🏓 WS: {before_ws}ms")
@@ -150,25 +153,31 @@ class Information(commands.Cog):
         Returns extensive stats of a country: country [country name]
         """
 
-        flag_icon, c_name_s, c_name_l, capital, curr_name, currr_symbol, language_list, flag_data, popu_short, area_short, region, region_s = get_country_information(
-            args)
-        shord_field = c_name_s + " " + flag_icon
+        country_data = get_country_information(args)
 
-        embed = discord.Embed(title=c_name_l,
-                              description=f"Country in {region}",
-                              timestamp=ctx.message.created_at,
-                              color=discord.Color.red())
-        embed.set_thumbnail(url=flag_data)
+        embed = discord.Embed(
+            title=country_data["c_name_l"],
+            description=f"Country in {country_data['region']}",
+            timestamp=ctx.message.created_at,
+            color=discord.Color.red()
+        )
+        embed.set_thumbnail(url=country_data["flag_data"])
 
-        embed.add_field(name="Name:", value=c_name_l)
-        embed.add_field(name="Capital:", value=capital)
-        embed.add_field(name="Short:", value=shord_field)
-        embed.add_field(name="Area:", value=area_short)
-        embed.add_field(name="Continent:", value=region_s)
-        embed.add_field(name="Population:", value=popu_short)
-        embed.add_field(name="Currency:", value=curr_name)
-        embed.add_field(name="Symbol:", value=currr_symbol)
-        embed.add_field(name="Language(s):", value=language_list)
+        field_data = {
+            "Name:": country_data["c_name_l"],
+            "Capital:": country_data["capital"],
+            "Short:": country_data["c_name_s"] + " " + country_data["flag_icon"],
+            "Area:": country_data["area_short"],
+            "Continent:": country_data["region_s"],
+            "Population:": country_data["popu_short"],
+            "Currency:": country_data["curr_name"],
+            "Symbol:": country_data["currr_symbol"],
+            "Language(s):": country_data["language_list"]
+        }
+
+        for name, value in field_data.items():
+            embed.add_field(name=name, value=value)
+
         embed.set_footer(text=f"Used by {ctx.author}", icon_url=ctx.author.avatar)
 
         await ctx.send(embed=embed)
