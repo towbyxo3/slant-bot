@@ -82,6 +82,7 @@ Shows a leaderboard of:
 
 ## Wordcloud
 Generates a word cloud of the most frequently used words by:  
+
 A specific member  
 
 ![Member Wordcloud](./README/07_wordcloud.PNG)
@@ -118,11 +119,11 @@ Features:
 
 Includes a clickable link to a gallery that contains all six graphics, ensuring permanent availability of the statistics.
 
-User Example
-![Rewind User](./README/12_rewind.gif)
+User Example  
+![Rewind User](./README/12_rewind.gif)  
 [Album Link Example](https://cdn.discordapp.com/attachments/1096666873615089694/1105904117274132592/rewind_gallery_user.png)
 
-Server Example
+Server Example  
 ![Rewind Server](./README/13_rewindserver.gif)
 
 ## Chat Peaks
