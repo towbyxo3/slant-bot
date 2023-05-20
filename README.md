@@ -81,12 +81,12 @@ Shows a leaderboard of:
 ![Mention Leaderboard](./README/06_mention.gif)
 
 ## Wordcloud
-Generates a word cloud of the most frequently used words by:
-A specific member
+Generates a word cloud of the most frequently used words by:  
+A specific member  
 
 ![Member Wordcloud](./README/07_wordcloud.PNG)
 
-The entire server
+The entire server  
 
 ![Server Wordcloud](./README/08_wordcloudserver.PNG)
 
@@ -134,10 +134,10 @@ Timeframes:
 - Month
 - Year
 
-User Example
+User Example  
 ![User Chat Peaks](./README/14_userpeak.gif)
 
-Server Example
+Server Example  
 ![Server Chat Peaks](./README/15_serverpeak.gif)
 
 ## Network
