@@ -76,8 +76,6 @@ Shows a leaderboard of:
 - Members who mention that specific member the most
 - Members who are mentioned the most by that specific member
 
- by a specific member
-
 ![Mention Leaderboard](./README/06_mention.gif)
 
 ## Wordcloud
