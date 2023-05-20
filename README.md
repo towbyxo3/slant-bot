@@ -1,13 +1,13 @@
-
 ![Slant Logo](./README/00_slant.gif)
 
-# Slant Server Discord BOT
-This is a Discord bot written in Python for a server with a group of friends and friends of friends. The bot is designed to make the server more fun and engaging by providing a range of useful features and commands.
+# Slant Server Discord Bot
+
+Slant Server Discord Bot is a Python-based Discord bot designed to enhance the fun and engagement of a server with a group of friends and friends of friends. This bot offers a variety of useful features and commands.
 
 ## Table of Contents
 - [How to Install](#how-to-install)
 - [Features](#features)
-  - [Welcome Message with AI Background Pictures](#welcome-message)
+  - [Welcome Message](#welcome-message)
   - [TIKTOK Downloader](#tiktok-downloader)
   - [Monthly Chat Leaderboard Updates](#monthly-chat-leaderboard-updates)
   - [Chat Leaderboard](#chat-leaderboard)
@@ -15,8 +15,8 @@ This is a Discord bot written in Python for a server with a group of friends and
   - [Mention Leaderboard](#mention-leaderboard)
   - [Wordcloud](#wordcloud)
   - [Avatar](#avatar)
-  - [Serverinfo](#serverinfo)
-  - [Userinfo](#userinfo)
+  - [Server Info](#server-info)
+  - [User Info](#user-info)
   - [Rewind](#rewind)
   - [Chat Peaks](#chat-peaks)
   - [Network](#network)
@@ -28,146 +28,148 @@ This is a Discord bot written in Python for a server with a group of friends and
 
 ## How to Install
 1. Clone the repository: `git clone https://github.com/towbyxo3/slant-python-discord-bot.git`
-2. Install packages: `pip install -r requirements.txt`
-3. Create a new Discord server: The new server is used to store various picture links. It's recommended to create text channels named "avatar_history_images" and "rewind_images" which will act as storage.
-4. Modify config.json: Insert your bot's token and your ID into the config.json file and modify bot display settings. Fill out the rest of the JSON file.
-5. Run the BOT: `python3 index.py` or `python index.py`
+2. Install required packages: `pip install -r requirements.txt`
+3. Create a new Discord server: This server will be used to store various picture links. It is recommended to create text channels named "avatar_history_images" and "rewind_images" to act as storage.
+4. Modify config.json: Insert your bot's token and your ID into the config.json file, and modify the bot's display settings. Fill out the rest of the JSON file.
+5. Run the bot: Execute `python3 index.py` or `python index.py`.
 
-Add tobi#1918 on Discord if you need help.
+If you need any assistance, feel free to add tobi#1918 on Discord.
 
 # Features
 
-The BOT has around 60 different commands and features which include very basic (like USERINFO, SERVERINFO, AVATAR, KICK, BAN, etc.) and many unique and server-dedicated ones.  
-Some of which are showcased in the next chapter.  
+The Slant Server Discord Bot offers approximately 60 different commands and features, including both basic commands (such as USERINFO, SERVERINFO, AVATAR, KICK, BAN, etc.) and unique server-dedicated ones. The following are some of the showcased features:
+
 [Command List](README/command_list.txt)
 
 ## Welcome Message
-Posts a welcome picture including the name and avatar of the newly joined member.
+Displays a welcome picture that includes the name and avatar of newly joined members.
 
 ![Welcome Message](./README/01_welcome.PNG)
 
 ## TIKTOK Downloader
-Automatically downloads any TikTok links and posts the video as a reply to the original message within seconds. This way, the sent TikTok is viewable directly on Discord.
+Automatically downloads and posts any TikTok video link as a reply to the original message within seconds, making it viewable directly on Discord.
 
-![TT downloader](./README/02_TIKTOK_downloader.PNG)
+![TIKTOK Downloader](./README/02_TIKTOK_downloader.PNG)
 
 ## Monthly Chat Leaderboard Updates
-On the 1st day of every month, the previous month's top 20 chatters are showcased.
+On the 1st day of every month, the bot showcases the top 20 chatters from the previous month.
 
-![Leaderboard update](./README/03_leaderboard_updates.gif)
+![Leaderboard Updates](./README/03_leaderboard_updates.gif)
 
 ## Chat Leaderboard
-Showcases Members with the most messages in the current time period:
-- weekly
-- monthly
-- yearly
-- all-time
+Displays a leaderboard of members with the most messages during different time periods:
+- Weekly
+- Monthly
+- Yearly
+- All-time
 
-![Chat LB](./README/04_leaderboard_chat.gif)
+![Chat Leaderboard](./README/04_leaderboard_chat.gif)
 
 ## Crowns
-Shows a leaderboard of members with the most crowns. You obtain a crown for every day you were the member with the most messages sent.
+Shows a leaderboard of members with the most crowns. Members earn a crown for every day they have the highest number of sent messages.
 
 ![Crowns](./README/05_crowns.PNG)
 
 ## Mention Leaderboard
 Shows a leaderboard of:
-- members with the most mentions
-- the members who mention a specific member the most
-- members who are mentioned the most by a specific member
+- Members with the most mentions
+- Members who mention a specific member the most
+- Members who are mentioned the most
 
-![Mention](./README/06_mention.gif)
+ by a specific member
+
+![Mention Leaderboard](./README/06_mention.gif)
 
 ## Wordcloud
-Creates a word cloud of the most frequently used words by:
-- a member
-  ![Wordcloud example](./README/07_wordcloud.PNG)
-- the server
-  ![Wordcloud example](./README/08_wordcloudserver.PNG)
+Generates a word cloud of the most frequently used words by:
+- A specific member
+  ![Member Wordcloud](./README/07_wordcloud.PNG)
+- The entire server
+  ![Server Wordcloud](./README/08_wordcloudserver.PNG)
 
 ## Avatar
-Showcases the profile pictures (global and server) currently used and since joining the server.
+Displays the current and past profile pictures of members, both global and server-specific, since joining the server.
 
 ![Avatar](./README/09_avatar.gif)
 
-## Serverinfo
-Shows server information with the option to display the server icon and banner.
+## Server Info
+Shows information about the server, including the option to display the server icon and banner.
 
-![Serverinfo](./README/10_serverinfo.PNG)
+![Server Info](./README/10_serverinfo.PNG)
 
-## Userinfo
-Showcases the profile pictures currently used and since joining the server.
+## User Info
+Displays information about a user, including their profile pictures since joining the server.
 
-![Avatar history example](./README/11_userinfo.PNG)
+![User Info](./README/11_userinfo.PNG)
 
 ## Rewind
-Showcases chat stats and data graphically of a selected year for a member or the server.
+Displays chat statistics and data graphically for a selected year of a member or the entire server.
 
 Features:
-- Calendar heatmap with message count for every day visualized
+- Calendar heatmap with message count for every day
 - Bar chart of messages per month
-- Month heatmap with message count for every month visualized
-- Hour of the weekday heatmap with message count visualized
-- Hour of the day heatmap with message count visualized
+- Month heatmap with message count
+- Hour of the weekday heatmap with message count
+- Hour of the day heatmap with message count
 - Bar chart of messages per weekday
 
-Has a clickable link that links to a gallery created out of all 6 graphics and guarantees permanent availability of the stats.
+Includes a clickable link to a gallery that contains all six graphics, ensuring permanent availability of the statistics.
 
-User:
-![Rewind example](./README/12_rewind.gif)
-[Album Link example](https://cdn.discordapp.com/attachments/1096666873615089694/1105904117274132592/rewind_gallery_user.png)
+User Example:
+![Rewind User](./README/12_rewind.gif)
+[Album Link Example](https://cdn.discordapp.com/attachments/1096666873615089694/1105904117274132592/rewind_gallery_user.png)
 
-Server:
-![Rewindserver](./README/13_rewindserver.gif)
+Server Example:
+![Rewind Server](./README/13_rewindserver.gif)
 
 ## Chat Peaks
-Shows a leaderboard of timeframes where a member or the server sent the most messages.
+Shows a leaderboard of timeframes in which a member or the server sent the most messages.
 
-Time frames:
-- day
-- week
-- month
-- year
+Timeframes:
+- Day
+- Week
+- Month
+- Year
 
-User:
-![User chat peak](./README/14_userpeak.gif)
+User Example:
+![User Chat Peaks](./README/14_userpeak.gif)
 
-Server:
-![Server chat peak](./README/15_serverpeak.gif)
+Server Example:
+![Server Chat Peaks](./README/15_serverpeak.gif)
 
 ## Network
-Visually showcases the most frequent chat encounters of. The numbers on the graph indicate the number of times that the member and the other person chatted within the same 5-minute time frame.
+Visually represents the most frequent chat encounters between members. The numbers on the graph indicate the number of times the member and the other person chatted within the same 5-minute time frame.
 
-![Network example](./README/16_network.PNG)
+![Network](./README/16_network.PNG)
 
 ## Age Leaderboard
-Showcases oldest or youngest members in Server by:
-- Discord Registration Date
-- Server Join Date
+Displays the oldest or youngest members in the server based on:
+- Discord registration date
+- Server join date
 
 ![Age Leaderboard](./README/17_age.gif)
 
 ## Snipe
-Showcases the last deleted message in the used text channel.
+Shows the last deleted message in the specified text channel.
 
-![Snipe example](./README/18_snipe.PNG)
+![Snipe](./README/18_snipe.PNG)
 
 ## Said
-Shows a leaderboard of members who used a particular word the most.
+Displays a leaderboard of members who used a particular word the most.
 
-![Word example](./README/19_said.PNG)
+![Said](./README/19_said.PNG)
 
 ## Quote
-Finds a random past message (by a member containing a word/phrase).
+Retrieves a random past message by a member containing a specific word or phrase.
 
-![Msg example](./README/20_quote.PNG)
-
-## Country
-Shows COVID-19 stats of a country.
-
-![Country example](./README/21_covid.PNG)
+![Quote](./README/20_quote.PNG)
 
 ## Country
-Shows basic information about a country.
+Shows COVID-19 statistics of a specific country.
 
-![Country example](./README/22_country.PNG)
+![Country COVID-19](./README/21_covid.PNG)
+
+## Country Info
+Provides basic information about a country.
+
+![Country Info](./README/22_country.PNG)
