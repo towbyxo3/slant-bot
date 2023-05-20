@@ -5,6 +5,7 @@
 Slant Server Discord Bot is a Python-based Discord bot designed to enhance the fun and engagement of a server with a group of friends and friends of friends. This bot offers a variety of useful features and commands.
 
 ## Table of Contents
+- [Requirements](#Requirements)
 - [Installation](#how-to-install)
 - [Features](#features)
   - [Welcome Message](#welcome-message)
@@ -25,6 +26,17 @@ Slant Server Discord Bot is a Python-based Discord bot designed to enhance the f
   - [Said](#said)
   - [Quote](#quote)
   - [Country](#country)
+
+
+# Requirements
+
+Before installing and running the Slant Server Discord Bot, please ensure that your system meets the following requirements:
+
+- **Python 3.10 or higher**: The bot requires Python 3.10 or a higher version to run. Check your Python version by running `python --version` or `python3 --version` in your terminal.
+
+- **Sufficient RAM**: The bot is expected to use approximately 300MB of RAM at peak usage for a server with roughly 300 members. Ensure that your system has enough available memory to handle the bot's resource requirements.
+
+- **Disk space**: The bot uses SQLite3 as its database. It requires approximately 150MB of disk space for every million messages stored in the database. Ensure that you have enough disk space available to accommodate the expected message volume.
 
 # How to Install
 1. Clone the repository: `git clone https://github.com/towbyxo3/slant-python-discord-bot.git`
