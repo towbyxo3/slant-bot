@@ -4,7 +4,6 @@
 - [Info](#info) (Commands for retrieving information about members and servers)
 - [Leaderboard](#leaderboard) (Commands for displaying leaderboard statistics)
 - [Mod](#mod) (Commands for moderating and managing members and server)
-- [Prune](#prune) (Commands for pruning and deleting messages)
 - [Fun](#fun) (Fun commands for interactive features)
 - [Voicechat](#voicechat) (Commands for moving members in voice channels)
 
