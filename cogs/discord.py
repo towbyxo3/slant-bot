@@ -190,7 +190,7 @@ class Discord_Info(commands.Cog):
     @commands.command()
     async def names(self, ctx, member: discord.Member = None):
         """
-        Get a member's history of names.
+        Get a member's history of names and save it to a file.
         """
         if member is None:
             member = ctx.author
@@ -199,17 +199,20 @@ class Discord_Info(commands.Cog):
         m_cursor = m_DB.cursor()
 
         m_cursor.execute("""
-            SELECT name
+            SELECT name, date
             FROM namehistory
             WHERE Id = ?
+            ORDER BY date DESC
             """, (user,))
 
-        message = f"<@{user}> name history: \n"
-        names = m_cursor.fetchall()
-        result = ', '.join([item[0] for item in names])
-        message += result
+        name_history = m_cursor.fetchall()
 
-        await ctx.send(message)
+        filename = "name_history.txt"
+        with open(filename, "w", encoding="utf-8") as file:
+            for name, date in name_history:
+                file.write(f"{date} - {name}\n")
+
+        await ctx.send(file=discord.File(filename))
 
     @commands.command(aliases=["bn"])
     async def banner(self, ctx, member: discord.Member = None):

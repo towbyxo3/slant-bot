@@ -173,6 +173,11 @@ Displays a leaderboard of members who used a particular word the most.
 
 ![Said](./README/19_said.PNG)
 
+## Name History
+Retrieves a member's previous user and nick names and posts them as text file.
+
+![Name history](./README/23_name_history.PNG)
+
 ## Quote
 Retrieves a random past message by a member containing a specific word or phrase.
 
