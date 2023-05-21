@@ -244,7 +244,7 @@ class ChatLeaderboard(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command(aliases=['lb', 'topchatter', 'topchatters', 'msglb', 'chatlb', 'chatleaderboard', 'mostmsgs', 'mostmessages', 'messageleaderboard'])
+    @commands.command(aliases=['chat', 'lb', 'topchatter', 'topchatters', 'msglb', 'chatlb', 'chatleaderboard', 'mostmsgs', 'mostmessages', 'messageleaderboard'])
     async def leaderboard(self, ctx, member: discord.Member = None):
         """
         Chat leaderboards of current periods
