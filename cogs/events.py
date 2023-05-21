@@ -22,7 +22,6 @@ class Events(commands.Cog):
             helper = str(ctx.invoked_subcommand) if ctx.invoked_subcommand else str(ctx.command)
             await ctx.send_help(helper)
 
-
         elif isinstance(err, errors.CommandInvokeError):
             error = default.traceback_maker(err.original)
 
@@ -46,15 +45,15 @@ class Events(commands.Cog):
         elif isinstance(err, errors.CommandNotFound):
             pass
 
-    """@commands.Cog.listener()
-                async def on_guild_join(self, guild: discord.Guild):
-                    to_send = next((
-                        chan for chan in guild.text_channels
-                        if chan.permissions_for(guild.me).send_messages
-                    ), None)
-            
-                    if to_send:
-                        await to_send.send(self.config["join_message"])"""
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild: discord.Guild):
+        to_send = next((
+            chan for chan in guild.text_channels
+            if chan.permissions_for(guild.me).send_messages
+        ), None)
+
+        if to_send:
+            await to_send.send(self.config["join_message"])
 
     @commands.Cog.listener()
     async def on_command(self, ctx: Context[BotT]):
@@ -87,6 +86,7 @@ class Events(commands.Cog):
 
         # Indicate that the bot has successfully booted up
         print(f"Ready: {self.bot.user} | Servers: {len(self.bot.guilds)}")
+        # Print server names
         for server in self.bot.guilds:
             print(server)
 

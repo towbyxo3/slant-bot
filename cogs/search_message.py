@@ -4,7 +4,6 @@ from discord.ext import commands
 from utils import default
 from typing import Optional
 import sys
-from helpers.numberformatting import *
 from helpers.dateformatting import format_YMD_to_DMY
 import requests
 
@@ -23,8 +22,8 @@ class Quote(commands.Cog):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
 
-    @commands.command()
-    async def msg(self, ctx, member: Optional[discord.Member] = None, *, word: Optional[str] = None):
+    @commands.command(aliases=['msg'])
+    async def quote(self, ctx, member: Optional[discord.Member] = None, *, word: Optional[str] = None):
         """
         Displays a random message
         by a member
@@ -84,29 +83,28 @@ class Quote(commands.Cog):
             )
             await ctx.send(embed=embed)
             return
-        id, date, content = data
 
+        id, date, content = data
         try:
             member = await self.bot.fetch_user(id)
         except:
-            embed = discord.Embed(
-                description=f"User doesn't exist anymore",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-            return
+            name = "Deleted User"
+            av = None
+        name = f"{member.name}#{member.discriminator}"
+        av = member.avatar
 
         embed = discord.Embed(
             description=content,
             color=discord.Color.green()
         )
         embed.set_author(
-            icon_url=member.avatar,
-            name=f"{member.name}#{member.discriminator} | {format_YMD_to_DMY(date[:10])}"
+            icon_url=av,
+            name=f"{name} | {format_YMD_to_DMY(date[:10])}"
         )
         await ctx.send(embed=embed)
 
-    @commands.command()
+
+"""    @commands.command()
     async def quote(self, ctx):
         # Get a random quote from the API
         quote, author = get_quote()
@@ -118,6 +116,7 @@ class Quote(commands.Cog):
 
         # Send the quote to the channel
         await ctx.send(embed=embed)
+"""
 
 
 async def setup(bot):

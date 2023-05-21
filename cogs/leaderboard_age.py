@@ -153,7 +153,7 @@ class AgeLeaderboard(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command(alises=["oldest", "ageleaderboard", "agelb"])
+    @commands.command(aliases=["oldest", "ageleaderboard", "agelb"])
     async def age(self, ctx, num=10):
         """
         Oldest or youngest members in Server by

@@ -24,7 +24,7 @@ Slant Server Discord Bot is a Python-based Discord bot designed to enhance the f
   - [Age Leaderboard](#age-leaderboard)
   - [Snipe](#snipe)
   - [Said](#said)
-  - [Name History(#name-history)
+  - [Name History](#name-history)
   - [Quote](#quote)
   - [Country](#country)
 

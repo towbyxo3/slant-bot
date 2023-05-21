@@ -196,19 +196,19 @@ class ChatLeaderboardView(discord.ui.View):
         self.yearly.disabled = False
         self.alltime.disabled = False
 
-        if self.current_page == 1:
+        if self.current_page == self.WEEKLY:
             self.weekly.disabled = True
             self.weekly.style = discord.ButtonStyle.gray
 
-        if self.current_page == 2:
+        if self.current_page == self.MONTHLY:
             self.monthly.disabled = True
             self.monthly.style = discord.ButtonStyle.gray
 
-        if self.current_page == 3:
+        if self.current_page == self.YEARLY:
             self.yearly.disabled = True
             self.yearly.style = discord.ButtonStyle.gray
 
-        if self.current_page == 4:
+        if self.current_page == self.ALLTIME:
             self.alltime.disabled = True
             self.alltime.style = discord.ButtonStyle.gray
 
@@ -244,7 +244,7 @@ class ChatLeaderboard(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command(aliases=['lb', 'topchatter', 'topchatters', 'msglb', 'chatlb', 'chatleaderboard', 'mostmsgs', 'mostmessages'])
+    @commands.command(aliases=['lb', 'topchatter', 'topchatters', 'msglb', 'chatlb', 'chatleaderboard', 'mostmsgs', 'mostmessages', 'messageleaderboard'])
     async def leaderboard(self, ctx, member: discord.Member = None):
         """
         Chat leaderboards of current periods

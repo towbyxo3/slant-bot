@@ -297,7 +297,7 @@ class MentionLeaderboard(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command(alises=["mentionlb", "mentionleaderboard", "mentions", "mentionslb", "taglb", "mosttags"])
+    @commands.command(aliases=["mentionlb", "mentionleaderboard", "mentions", "mentionslb", "taglb", "mosttags", "mostmentions", "tagleaderboard", "tags"])
     async def mention(self, ctx, member: discord.Member = None):
         """
         Displays three mention leaderboards and allows switching between them,

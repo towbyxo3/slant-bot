@@ -93,7 +93,9 @@ class Information(commands.Cog):
 
     @commands.command()
     async def myservers(self, ctx):
-        # server = self.bot.get_guild(865385063792771092)
+        """
+        Creates invite links for every server the bot is in.
+        """
         invites = []
         for guild in self.bot.guilds:
             for c in guild.text_channels:
@@ -107,7 +109,9 @@ class Information(commands.Cog):
 
     @commands.command(aliases=['inv'])
     async def invite(self, ctx):
-
+        """
+        Returns invite for this server.
+        """
         server = ctx.guild
         for c in server.text_channels:
             # make sure the bot can actually create an invite
@@ -150,7 +154,7 @@ class Information(commands.Cog):
     @commands.command()
     async def country(self, ctx, *, args):
         """
-        Returns extensive stats of a country: country [country name]
+        Returns extensive stats of a country.
         """
 
         country_data = get_country_information(args)
@@ -209,6 +213,20 @@ class Information(commands.Cog):
         embed.add_field(name="RAM", value=f"{ramUsage:.2f} MB")
 
         await ctx.send(content=f"ℹ About **{ctx.bot.user}**", embed=embed)
+
+    @commands.command(aliases=["git", "repository", "repo", "sourcecode"])
+    async def github(self, ctx):
+        embed = discord.Embed(
+            title="Source Code",
+            color=discord.Color.green()
+        )
+        embed.set_thumbnail(url="https://i.imgur.com/E0BMWj8.png")
+        embed.add_field(
+            name="GitHub Repository",
+            value="[towbyxo3/slant-python-discord-bot](https://github.com/towbyxo3/slant-python-discord-bot)",
+            inline=False
+        )
+        await ctx.send(embed=embed)
 
 
 async def setup(bot):

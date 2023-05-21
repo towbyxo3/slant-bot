@@ -279,7 +279,7 @@ class Userpeaks(commands.Cog):
         self.config = default.load_json()
         self.process = psutil.Process(os.getpid())
 
-    @commands.command(alises=["up", "upeak", "userpeaks"])
+    @commands.command(aliases=["up", "upeak", "userpeaks"])
     async def userpeak(self, ctx, member: discord.Member = None):
         """
         Displays leaderboards of days, weeks, months and years where a member

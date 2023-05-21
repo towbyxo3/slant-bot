@@ -457,23 +457,24 @@ class AvHistory(commands.Cog):
 
         now = str(datetime.datetime.now())
 
-        # for every new and unique avatar, store bytes of the picture
-        # send the picture as file in a seperate channel,
-        # save the attachment url and store the gathered data in a database
+        # for every new and unique avatar, download picture or gif
         for av in avatars:
             try:
                 file_name = f"{av.key}.{'gif' if av.is_animated() else 'png'}"
                 file_bytes = await av.read()
+                # fetch channel where you post the permanent avatar copy
                 channel = self.bot.get_channel(self.channel_avatar_history_images)
                 text = f"{after}'s avatar (ID: {after.id})"
                 member = channel.guild.get_member(after.id)
                 if member:
                     text += f" {after.mention}"
+                # send the picture as file in a seperate channel,
                 m = await channel.send(
                     file=discord.File(io.BytesIO(file_bytes), filename=file_name),
                     content=text,
                     allowed_mentions=discord.AllowedMentions.none(),
                 )
+                # save the attachment url and store the gathered data in a database
                 url = m.attachments[0].url
                 entry_avatar(avh_cursor, avh_DB, now, after.id, url, str(av))
                 print(url)
@@ -484,7 +485,8 @@ class AvHistory(commands.Cog):
     async def avatar(self, ctx, member: discord.Member = None):
         """
         Displays a members global (and if given, server avatar in a embed view).
-        Additonally, you get the option to view a members past avatars.
+        Additonally, you get the option to view a members past avatars and
+        to delete them if you're the owner of the avatar.
         """
 
         if member is None:

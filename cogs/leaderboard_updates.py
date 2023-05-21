@@ -30,7 +30,7 @@ def shorten_username(username, max_length=10):
 
 def top_20_monthly_chatters(cursor, year, month):
     """
-    Returns top monthly chatters of a particular month in a year
+    Returns top monthly chatters of a particular month in a year.
     """
     cursor.execute("""
         SELECT Id, SUM(Msgs) AS Msgs
@@ -45,7 +45,7 @@ def top_20_monthly_chatters(cursor, year, month):
 
 
 def top_20_all_time_chatters(cursor):
-    # returns top all time chatters
+    """ returns top all time chatters"""
     cursor.execute("""
         SELECT ID, SUM(Msgs) AS Msgs
         FROM userchat
@@ -58,11 +58,13 @@ def top_20_all_time_chatters(cursor):
 
 
 def get_day_of_month():
+    """ Get current day of the month. """
     now = datetime.datetime.now()
     return now.day
 
 
 def get_prev_month():
+    """Returns prevoius month. """
     now = datetime.datetime.now()
     first_day_of_month = datetime.datetime(now.year, now.month, 1)
     prev_month_last_day = first_day_of_month - datetime.timedelta(days=1)
@@ -318,7 +320,7 @@ class MonthlyLeaderboardUpdate(commands.Cog):
         """
 
         day_of_the_month = 1
-        if get_day_of_month() != 12:
+        if get_day_of_month() != day_of_the_month:
             return
         CHANNEL_ID = self.channel_all_time_leaderboard_update
         SERVER_ID = self.my_guild

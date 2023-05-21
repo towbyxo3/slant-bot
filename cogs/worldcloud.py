@@ -4,11 +4,9 @@ from discord.ext import commands
 from utils import default
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image
 import sys
 from helpers.dateformatting import *
-from helpers.numberformatting import *
+from helpers.numberformatting import abbreviate_number
 
 sys.path.append("helpers")
 sys.path.append("queries")
@@ -209,7 +207,9 @@ class Wordcloud(commands.Cog):
 
     @commands.command(aliases=["wcs", "wcserver"])
     async def wordcloudserver(self, ctx, length=2):
-        print(length)
+        """
+        Returns a wordcloud that shows the most frequently used words in the server graphically.
+        """
         filename = "worldcloud_server"
         m_DB = sqlite3.connect('messages.db')
         m_cursor = m_DB.cursor()
@@ -239,6 +239,9 @@ class Wordcloud(commands.Cog):
 
     @commands.command(aliases=["wc", "wcuser", "wordclouduser"])
     async def wordcloud(self, ctx, member: discord.Member = None):
+        """
+        Returns a wordcloud that shows the most frequently used words by a member graphically.
+        """
 
         m_DB = sqlite3.connect('messages.db')
         m_cursor = m_DB.cursor()
@@ -266,6 +269,7 @@ class Wordcloud(commands.Cog):
 
     @commands.command()
     async def said(self, ctx, word=None):
+        """Returns leaderboard of members who most frequently used the word."""
         if word is None:
             await ctx.send("Please add a word.\n*vocablb **word**")
             return

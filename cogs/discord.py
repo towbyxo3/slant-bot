@@ -4,6 +4,7 @@ from discord.ext.commands.context import Context
 from discord.ext.commands._types import BotT
 from discord.ext import commands
 import sys
+import os
 import sqlite3
 from queries.userchatqueries import get_user_rank_top_chatters_alltime
 from helpers.numberformatting import abbreviate_number
@@ -126,7 +127,7 @@ class Discord_Info(commands.Cog):
         self.bot: commands.AutoShardedBot = bot
         self.config = default.load_json()
 
-    @commands.command(aliases=['si', 'serverinfo'])
+    @commands.command(aliases=['si', 'serverinfo', 'sv'])
     async def server(self, ctx: Context[BotT]):
         """ Check info about current server """
         pagination_view = ServerinfoView(timeout=120)
@@ -185,7 +186,7 @@ class Discord_Info(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(alises=["namehistory", "history", "aliases", "alias", "name"])
     async def names(self, ctx, member: discord.Member = None):
         """
         Get a member's history of names and save it to a file.
@@ -211,8 +212,9 @@ class Discord_Info(commands.Cog):
                 file.write(f"{date} - {name}\n")
 
         await ctx.send(file=discord.File(filename))
+        os.remove(filename)
 
-    @commands.command(aliases=["bn"])
+    @commands.command(aliases=["bn", "userbanner", "memberbanner"])
     async def banner(self, ctx, member: discord.Member = None):
         """
         Shows users global banner
