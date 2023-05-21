@@ -18,7 +18,7 @@ class Help(commands.Cog):
         self.process = psutil.Process(os.getpid())
 
     @commands.command()
-    async def help(self, ctx):
+    async def oldhelp(self, ctx):
         """
         Lists all commands.
         """

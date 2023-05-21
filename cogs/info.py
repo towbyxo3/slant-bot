@@ -228,6 +228,17 @@ class Information(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+    @commands.command(aliases=["helpcommand"])
+    async def help(self, ctx):
+        embed = discord.Embed(color=discord.Color.green(), title="Help Command")
+        embed.set_thumbnail(url="https://i.imgur.com/E0BMWj8.png")
+        embed.add_field(
+            name="Overview of Bot Commands",
+            value="[Command List](https://github.com/towbyxo3/slant-python-discord-bot/blob/master/README/command_list.md)",
+        )
+        embed.set_footer(text="Last updated: 22.05.2023")
+        await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(Information(bot))
