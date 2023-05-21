@@ -1,6 +1,4 @@
 import discord
-
-from io import BytesIO
 from utils import default
 from discord.ext.commands.context import Context
 from discord.ext.commands._types import BotT
@@ -207,7 +205,7 @@ class Discord_Info(commands.Cog):
 
         name_history = m_cursor.fetchall()
 
-        filename = "name_history.txt"
+        filename = f"name_history_{member.id}.txt"
         with open(filename, "w", encoding="utf-8") as file:
             for name, date in name_history:
                 file.write(f"{date} - {name}\n")

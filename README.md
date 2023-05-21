@@ -9,7 +9,7 @@ Slant Server Discord Bot is a Python-based Discord bot designed to enhance the f
 - [Installation](#how-to-install)
 - [Features](#features)
   - [Welcome Message](#welcome-message)
-  - [TIKTOK Downloader](#tiktok-downloader)
+  - [TikTok Downloader](#tiktok-downloader)
   - [Monthly Chat Leaderboard Updates](#monthly-chat-leaderboard-updates)
   - [Chat Leaderboard](#chat-leaderboard)
   - [Crowns](#crowns)
@@ -24,6 +24,7 @@ Slant Server Discord Bot is a Python-based Discord bot designed to enhance the f
   - [Age Leaderboard](#age-leaderboard)
   - [Snipe](#snipe)
   - [Said](#said)
+  - [Name History(#name-history)
   - [Quote](#quote)
   - [Country](#country)
 
