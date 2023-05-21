@@ -133,24 +133,23 @@ Removes a certain number of recently added reactions.
 ---
 
 ## Fun
-- **network** [member]: \
+- **network** [member]:\
 Returns the most frequent chat encounters of a member graphically. The numbers on the graph indicate the number of times that a member and the other person chatted within the same 5-minute time frame.
-
 - **wordcloud** [member, min word length]: 
 Returns a wordcloud that shows the most frequently used words by a member graphically.
 - **wordcloudserver** [min word length]: 
 Returns a wordcloud that shows the most frequently used words in the server graphically.
 - **said** [word]: 
 Returns members who most frequently used the word.
-
+---
 - **rewind** [member, year]: \
 Returns an embed with clickable rewind pictures and stats of a year. The embed contains 6 pictures that display the most notable member chat stats of a particular year.
 - **rewindserver** [year]: \
 Returns an embed with clickable rewind pictures and stats of a year. The embed contains 6 pictures that display the most notable server chat stats of a particular year.
-
+---
 - **quote** [member, word/phrase]: 
 Returns a random message (by a member) that contains a certain phrase or word.
-
+---
 - **snipe** [member]: 
 Returns the last deleted message (by a member).
 - **snip** [member]: 
