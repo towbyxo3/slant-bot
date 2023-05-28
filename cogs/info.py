@@ -234,7 +234,7 @@ class Information(commands.Cog):
         embed.set_thumbnail(url="https://i.imgur.com/E0BMWj8.png")
         embed.add_field(
             name="Overview of Bot Commands",
-            value="[Command List](https://github.com/towbyxo3/slant-python-discord-bot/blob/master/README/command_list.md)",
+            value="[Command List](https://towbyxo3.github.io/tobo)",
         )
         embed.set_footer(text="Last updated: 22.05.2023")
         await ctx.send(embed=embed)

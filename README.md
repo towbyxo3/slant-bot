@@ -52,7 +52,7 @@ If you need any assistance, feel free to add *tobi#1918* on Discord.
 
 The Slant Server Discord Bot offers approximately 60 different commands and features, including both basic commands (such as USERINFO, SERVERINFO, AVATAR, KICK, BAN, etc.) and unique server-dedicated ones. The following are some of the showcased features:
 
-[Command List](README/command_list.md)
+[Full Command List](https://towbyxo3.github.io/tobo)
 
 ## Welcome Message
 Posts a welcome picture that includes the name and avatar of newly joined members.
