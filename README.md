@@ -27,7 +27,7 @@ Slant Server Discord Bot is a Python-based Discord bot designed to enhance the f
   - [Name History](#name-history)
   - [Quote](#quote)
   - [Country](#country)
-
+- [Credit](#credit)
 
 # Requirements
 
@@ -193,3 +193,7 @@ Shows COVID-19 statistics of a specific country.
 Provides basic information about a country.
 
 ![Country Info](./README/22_country.PNG)
+
+
+# Credit
+The code in this project was built upon **[AlexFlipnote's](https://github.com/AlexFlipnote)** *[starter framework](https://github.com/AlexFlipnote/discord_bot.py)*.
